@@ -1,12 +1,16 @@
 package com.stackoverflow.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "votes")
 public class Vote {
     @Id
@@ -28,14 +32,5 @@ public class Vote {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VoteType type;
-
-    public Vote(){}
-    public Vote(Long id, User user, Question question, Answer answer, VoteType type) {
-        this.id = id;
-        this.user = user;
-        this.question = question;
-        this.answer = answer;
-        this.type = type;
-    }
 
 }

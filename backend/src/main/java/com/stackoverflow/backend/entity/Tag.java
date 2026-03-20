@@ -1,9 +1,13 @@
 package com.stackoverflow.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -16,10 +20,5 @@ public class Tag {
     @Column(nullable = false, unique = true)
     private String name;
 
-    public Tag(){}
-    public Tag(Integer id, String name){
-        this.id = id;
-        this.name = name;
-    }
 
 }

@@ -1,7 +1,9 @@
 package com.stackoverflow.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "questions")
 public class Question {
     @Id
@@ -44,18 +48,5 @@ public class Question {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-    public Question(){}
-
-    public Question(Integer id, User author, String title, String body, String imageUrl, QuestionStatus status, List<Tag> tags, LocalDateTime createdAt){
-        this.id = id;
-        this.author = author;
-        this.title = title;
-        this.body = body;
-        this.imageUrl = imageUrl;
-        this.status = status;
-        this.tags = tags != null ? tags : new ArrayList<>();
-        this.createdAt = createdAt;
-    }
 
 }

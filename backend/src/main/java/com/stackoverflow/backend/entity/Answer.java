@@ -1,12 +1,13 @@
 package com.stackoverflow.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -31,16 +32,5 @@ public class Answer {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-    public Answer(){}
-
-    public Answer(Integer id, Question question, User author, String body, String imageUrl, LocalDateTime createdAt) {
-        this.id = id;
-        this.question = question;
-        this.author = author;
-        this.body = body;
-        this.imageUrl = imageUrl;
-        this.createdAt = createdAt;
-    }
 
 }

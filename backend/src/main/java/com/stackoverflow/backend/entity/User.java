@@ -2,12 +2,13 @@ package com.stackoverflow.backend.entity;
 
 import jakarta.persistence.*;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -35,19 +36,5 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
-
-    public User() {}
-
-    public User(Integer id, String username, String email,
-                String password, double score, boolean isBanned, LocalDateTime createdAt, UserRole role) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.score = score;
-        this.isBanned = isBanned;
-        this.createdAt = createdAt;
-        this.role = role;
-    }
 
 }
