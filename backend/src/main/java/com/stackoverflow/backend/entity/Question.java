@@ -38,13 +38,8 @@ public class Question {
     @Column(nullable = false)
     private QuestionStatus status = QuestionStatus.RECEIVED;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "question_tags",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags = new ArrayList<>();
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionTag> questionTags = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;
