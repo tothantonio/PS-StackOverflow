@@ -1,12 +1,10 @@
 package com.stackoverflow.backend.controller;
 
-import com.stackoverflow.backend.dto.UserRequestDTO;
-import com.stackoverflow.backend.dto.UserResponseDTO;
+import com.stackoverflow.backend.entity.User;
 import com.stackoverflow.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -16,23 +14,23 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public UserResponseDTO create(@RequestBody UserRequestDTO dto) {
-        return userService.create(dto);
+    public User create(@RequestBody User user) {
+        return userService.create(user);
     }
 
     @GetMapping
-    public List<UserResponseDTO> getAll() {
+    public Iterable<User> getAll() {
         return userService.getAll();
     }
 
     @GetMapping("/{id}")
-    public UserResponseDTO getById(@PathVariable Integer id) {
+    public User getById(@PathVariable Integer id) {
         return userService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO update(@PathVariable Integer id, @RequestBody UserRequestDTO dto) {
-        return userService.update(id, dto);
+    public User update(@PathVariable Integer id, @RequestBody User user) {
+        return userService.update(id, user);
     }
 
     @DeleteMapping("/{id}")

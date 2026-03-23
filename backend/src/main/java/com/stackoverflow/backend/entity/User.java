@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
+@Data
 @Entity
 @Builder
 @Table(name = "users")
@@ -25,11 +24,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String password;
 
-    private double score = 0.0;
-    private boolean isBanned = false;
+    private Double score = 0.0;
+    private Boolean isBanned = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
