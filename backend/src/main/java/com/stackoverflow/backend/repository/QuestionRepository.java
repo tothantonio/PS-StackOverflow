@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
-    List<Question> findAllByOrderByCreatedAt();
+    List<Question> findAllByOrderByCreatedAtDesc();
     List<Question> findByAuthorOrderByCreatedAt(User author);
     List<Question> findByTitleContaining(String keyword);
 }
