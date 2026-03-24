@@ -2,7 +2,6 @@ package com.stackoverflow.backend.service;
 
 import com.stackoverflow.backend.entity.*;
 import com.stackoverflow.backend.repository.QuestionRepository;
-import com.stackoverflow.backend.repository.QuestionTagRepository;
 import com.stackoverflow.backend.repository.TagRepository;
 import com.stackoverflow.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +37,8 @@ public class QuestionService {
         question.setAuthor(author);
         question.setStatus(QuestionStatus.RECEIVED);
 
-        Question savedQuestion = questionRepository.save(question);
-        saveTags(tagNames, savedQuestion);
-
-        return questionRepository.findById(savedQuestion.getId())
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+        saveTags(tagNames, question);
+        return questionRepository.save(question);
     }
 
     public Question update(Integer id, Question updatedQuestion, Integer authorId, List<String> tagNames) {
@@ -58,12 +54,9 @@ public class QuestionService {
         question.setImageUrl(updatedQuestion.getImageUrl());
 
         question.getQuestionTags().clear();
-        questionRepository.save(question);
 
         saveTags(tagNames, question);
-
-        return questionRepository.findById(question.getId())
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+        return questionRepository.save(question);
     }
 
     public void delete(Integer id, Integer authorId) {
