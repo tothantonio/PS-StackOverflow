@@ -44,4 +44,7 @@ public class Question {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
 }
