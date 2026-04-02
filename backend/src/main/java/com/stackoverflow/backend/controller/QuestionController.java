@@ -16,7 +16,7 @@ public class QuestionController {
     private QuestionService questionService;
 
     @GetMapping
-    public Iterable<Question> getAll() {
+    public List<Question> getAll() {
         return questionService.getAll();
     }
 

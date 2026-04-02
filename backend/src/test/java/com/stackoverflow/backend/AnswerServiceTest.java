@@ -20,77 +20,129 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AnswerServiceTest {
+class AnswerServiceTest {
 
     @Mock private AnswerRepository answerRepo;
     @Mock private QuestionRepository questionRepo;
     @Mock private UserRepository userRepo;
+
     @InjectMocks private AnswerService answerService;
 
-    private User mockUser(Integer id) { User u = new User(); u.setId(id); return u; }
-    private Question mockQuestion(Integer id) { Question q = new Question(); q.setId(id); return q; }
-    private Answer mockAnswer(Integer id, Integer authorId) {
-        Answer a = new Answer(); a.setId(id); a.setAuthor(mockUser(authorId)); a.setBody("Original Body"); return a;
+    // helpers
+    private User buildUser(Integer id) {
+        User u = new User();
+        u.setId(id);
+        return u;
+    }
+
+    private Question buildQuestion(Integer id) {
+        Question q = new Question();
+        q.setId(id);
+        return q;
+    }
+
+    private Answer buildAnswer(Integer id, Integer authorId) {
+        Answer a = new Answer();
+        a.setId(id);
+        a.setAuthor(buildUser(authorId));
+        a.setBody("Original Body");
+        return a;
     }
 
     @Test
-    void testGetByQuestion() {
-        Question q = mockQuestion(1);
+    void getByQuestion_ShouldReturnAnswers() {
+        Question q = buildQuestion(1);
+
         when(questionRepo.findById(1)).thenReturn(Optional.of(q));
-        when(answerRepo.findByQuestion(q)).thenReturn(List.of(mockAnswer(1, 1)));
+        when(answerRepo.findByQuestion(q))
+                .thenReturn(List.of(buildAnswer(1, 1)));
 
-        assertEquals(1, ((List<Answer>) answerService.getByQuestion(1)).size());
+        List<Answer> result = (List<Answer>) answerService.getByQuestion(1);
 
-        when(questionRepo.findById(99)).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> answerService.getByQuestion(99));
+        assertEquals(1, result.size());
     }
 
     @Test
-    void testCreate() {
-        Answer newAnswer = new Answer();
-        when(questionRepo.findById(1)).thenReturn(Optional.of(mockQuestion(1)));
-        when(userRepo.findById(1)).thenReturn(Optional.of(mockUser(1)));
-        when(answerRepo.save(any(Answer.class))).thenReturn(newAnswer);
+    void getByQuestion_ShouldThrow_WhenQuestionNotFound() {
+        when(questionRepo.findById(1)).thenReturn(Optional.empty());
 
-        assertNotNull(answerService.create(newAnswer, 1, 1));
-        verify(answerRepo).save(newAnswer);
+        assertThrows(RuntimeException.class,
+                () -> answerService.getByQuestion(1));
+    }
 
+    @Test
+    void create_ShouldSaveAnswer_WhenValid() {
+        Answer answer = new Answer();
+
+        when(questionRepo.findById(1)).thenReturn(Optional.of(buildQuestion(1)));
+        when(userRepo.findById(1)).thenReturn(Optional.of(buildUser(1)));
+        when(answerRepo.save(any(Answer.class))).thenReturn(answer);
+
+        Answer result = answerService.create(answer, 1, 1);
+
+        assertNotNull(result);
+        verify(answerRepo).save(any(Answer.class));
+    }
+
+    @Test
+    void create_ShouldThrow_WhenQuestionNotFound() {
+        Answer answer = new Answer();
         when(questionRepo.findById(99)).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> answerService.create(newAnswer, 99, 1), "Question not found");
 
-        when(questionRepo.findById(1)).thenReturn(Optional.of(mockQuestion(1)));
+        assertThrows(RuntimeException.class,
+                () -> answerService.create(answer, 99, 1));
+    }
+
+    @Test
+    void create_ShouldThrow_WhenUserNotFound() {
+        Answer answer = new Answer();
+
+        when(questionRepo.findById(1)).thenReturn(Optional.of(buildQuestion(1)));
         when(userRepo.findById(99)).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> answerService.create(newAnswer, 1, 99), "Author not found");
+
+        assertThrows(RuntimeException.class,
+                () -> answerService.create(answer, 1, 99));
     }
 
     @Test
-    void testUpdate() {
-        Answer existing = mockAnswer(1, 1);
-        Answer updateData = new Answer(); updateData.setBody("Updated Body");
+    void update_ShouldUpdate_WhenOwner() {
+        Answer existing = buildAnswer(1, 1);
+        Answer update = new Answer();
+        update.setBody("Updated");
 
         when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
         when(answerRepo.save(any(Answer.class))).thenReturn(existing);
 
-        Answer res = answerService.update(1, updateData, 1);
-        assertEquals("Updated Body", res.getBody());
+        Answer result = answerService.update(1, update, 1);
 
-        assertThrows(RuntimeException.class, () -> answerService.update(1, updateData, 2));
-
-        when(answerRepo.findById(99)).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> answerService.update(99, updateData, 1));
+        assertEquals("Updated", result.getBody());
     }
 
     @Test
-    void testDelete() {
-        Answer existing = mockAnswer(1, 1);
+    void update_ShouldThrow_WhenNotOwner() {
+        Answer existing = buildAnswer(1, 1);
+        when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
+
+        assertThrows(RuntimeException.class,
+                () -> answerService.update(1, new Answer(), 2));
+    }
+
+    @Test
+    void delete_ShouldDelete_WhenOwner() {
+        Answer existing = buildAnswer(1, 1);
         when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
 
         answerService.delete(1, 1);
+
         verify(answerRepo).delete(existing);
+    }
 
-        assertThrows(RuntimeException.class, () -> answerService.delete(1, 2));
+    @Test
+    void delete_ShouldThrow_WhenNotOwner() {
+        Answer existing = buildAnswer(1, 1);
+        when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
 
-        when(answerRepo.findById(99)).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> answerService.delete(99, 1));
+        assertThrows(RuntimeException.class,
+                () -> answerService.delete(1, 2));
     }
 }

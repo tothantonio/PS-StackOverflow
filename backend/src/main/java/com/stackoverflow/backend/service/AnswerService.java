@@ -9,6 +9,8 @@ import com.stackoverflow.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AnswerService {
 
@@ -21,7 +23,7 @@ public class AnswerService {
     @Autowired
     private UserRepository userRepository;
 
-    public Iterable<Answer> getByQuestion(Integer questionId) {
+    public List<Answer> getByQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
         return answerRepository.findByQuestion(question);

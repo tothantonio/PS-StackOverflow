@@ -5,6 +5,8 @@ import com.stackoverflow.backend.service.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/answers")
 public class AnswerController{
@@ -13,7 +15,7 @@ public class AnswerController{
     private AnswerService answerService;
 
     @GetMapping("/question")
-    public Iterable<Answer> getByQuestion(@RequestParam Integer questionId) {
+    public List<Answer> getByQuestion(@RequestParam Integer questionId) {
         return answerService.getByQuestion(questionId);
     }
 

@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface VoteRepository extends CrudRepository<Vote, Integer> {
-    Optional<Vote> findByUserAndQuestion(User author, Question question);
-    Optional<Vote> findByUserAndAnswer(User user, Answer answer);
-    long countByQuestionAndType(Question question, VoteType type);
-    long countByAnswerAndType(Answer answer, VoteType type);
+//    Optional<Vote> findByUserAndQuestion(User author, Question question);
+//    Optional<Vote> findByUserAndAnswer(User user, Answer answer);
+//    long countByQuestionAndType(Question question, VoteType type);
+//    long countByAnswerAndType(Answer answer, VoteType type);
 }

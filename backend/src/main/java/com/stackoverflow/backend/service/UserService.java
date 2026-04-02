@@ -6,6 +6,8 @@ import com.stackoverflow.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -23,8 +25,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Iterable<User> getAll() {
-        return userRepository.findAll();
+    public List<User> getAll() {
+        return (List<User>) userRepository.findAll();
     }
 
     public User getById(Integer id) {

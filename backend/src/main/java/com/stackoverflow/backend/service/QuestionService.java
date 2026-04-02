@@ -22,7 +22,7 @@ public class QuestionService {
     @Autowired
     private TagRepository tagRepository;
 
-    public Iterable<Question> getAll() {
+    public List<Question> getAll() {
         return questionRepository.findAllByOrderByCreatedAtDesc();
     }
 
