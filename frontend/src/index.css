@@ -1,0 +1,115 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #232629;
+  background: #f1f2f3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #d6d9dc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.stack-title {
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.stack-input,
+.stack-textarea {
+  width: 100%;
+  border: 1px solid #babfc4;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
+.stack-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.stack-button {
+  border: 1px solid #0074cc;
+  border-radius: 6px;
+  padding: 9px 14px;
+  background: #0a95ff;
+  color: #ffffff;
+}
+
+.stack-button:hover {
+  background: #0074cc;
+}
+
+.tag-pill {
+  display: inline-block;
+  margin: 4px 6px 0 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #e1ecf4;
+  color: #39739d;
+  font-size: 13px;
+}
+
+.muted {
+  color: #6a737c;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #d6d9dc;
+}
+
+.site-logo {
+  font-weight: 700;
+  text-decoration: none;
+  color: #232629;
+}
+
+.site-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: #3b4045;
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "body": "Props are values sent from a parent component to a child component.",
+    "createdAt": "2026-04-28T12:30:00",
+    "author": {
+      "id": 2,
+      "username": "maria"
+    }
+  }
+]

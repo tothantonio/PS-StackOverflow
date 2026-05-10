@@ -1,18 +1,13 @@
 type VoteColumnProps = {
     votes: number;
-    accepted?: boolean;
 };
 
-function VoteColumn({ votes, accepted }: VoteColumnProps) {
+function VoteColumn({ votes }: VoteColumnProps) {
     return (
-        <div className="vote-column">
-            <button className="vote-button">▲</button>
-            <span className="vote-count">{votes}</span>
-            <button className="vote-button">▼</button>
-
-            {accepted && <span className="accepted-mark">✓</span>}
-
-            <button className="save-button">♡</button>
+        <div style={{ minWidth: "60px", textAlign: "center", color: "#6a737c" }}>
+            <div style={{ fontSize: "22px" }}>▲</div>
+            <strong>{votes}</strong>
+            <div style={{ fontSize: "22px" }}>▼</div>
         </div>
     );
 }

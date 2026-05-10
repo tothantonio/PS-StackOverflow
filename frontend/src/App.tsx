@@ -12,6 +12,9 @@ function App() {
                     <Route path="/" element={<Navigate to="/questions" replace />} />
                     <Route path="/questions" element={<QuestionsPage />} />
                     <Route path="/questions/:id" element={<QuestionDetailsPage />} />
+                    <Route path="/questions/:id/answers" element={<QuestionDetailsPage />} />
+                    <Route path="/questions/:id/answers/new" element={<QuestionDetailsPage />} />
+                    <Route path="*" element={<Navigate to="/questions" replace />} />
                 </Routes>
             </MainLayout>
         </BrowserRouter>
