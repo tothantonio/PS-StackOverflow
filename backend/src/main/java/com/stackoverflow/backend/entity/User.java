@@ -33,13 +33,13 @@ public class User {
     private Boolean isBanned = false;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; //data cand apare prima data in bd
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
 
-    @JsonIgnore
+    @JsonIgnore //scoate campul de questions din proc de serializare a datelor pt ca am o rel intre
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
