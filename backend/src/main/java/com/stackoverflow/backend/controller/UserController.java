@@ -1,7 +1,7 @@
 package com.stackoverflow.backend.controller;
 
 import com.stackoverflow.backend.entity.User;
-import com.stackoverflow.backend.service.UserService;
+import com.stackoverflow.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

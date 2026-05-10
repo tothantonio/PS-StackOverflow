@@ -1,7 +1,7 @@
 package com.stackoverflow.backend.controller;
 
 import com.stackoverflow.backend.entity.Question;
-import com.stackoverflow.backend.service.QuestionService;
+import com.stackoverflow.backend.services.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

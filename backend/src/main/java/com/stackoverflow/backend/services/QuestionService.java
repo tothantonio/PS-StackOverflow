@@ -1,4 +1,4 @@
-package com.stackoverflow.backend.service;
+package com.stackoverflow.backend.services;
 
 import com.stackoverflow.backend.entity.*;
 import com.stackoverflow.backend.repository.QuestionRepository;
