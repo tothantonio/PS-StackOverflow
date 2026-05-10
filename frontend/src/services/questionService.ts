@@ -1,8 +1,9 @@
-import type {QuestionDto} from "../features/qa/types/questionTypes.ts";
+import type {CreateQuestionRequest, QuestionDto} from "../features/qa/types/questionTypes.ts";
 import questionsData from "../features/qa/mockData/questions.json";
 
-const questions = questionsData as QuestionDto[];
-//let questions = questionsData as QuestionDto[];
+// Folosim 'let' în loc de 'const' pentru a putea modifica array-ul
+let questions: QuestionDto[] = questionsData as unknown as QuestionDto[];
+
 export function getQuestions(): QuestionDto[] {
     return questions.sort(
         (a, b) =>
@@ -38,9 +39,9 @@ export function createQuestion(data: CreateQuestionRequest): QuestionDto {
         createdAt: new Date().toISOString(),
         status: "RECEIVED",
         voteCount: 0,
-        author: {
+        author: { // Mock author
             id: 1,
-            username: "alex",
+            username: "alex"
         },
     };
 
@@ -57,13 +58,18 @@ export function updateQuestion(
     id: number,
     data: CreateQuestionRequest
 ): QuestionDto | undefined {
-    questions = questions.map((question) =>
-        question.id === id
-            ? {
+    let updatedQuestion: QuestionDto | undefined;
+    questions = questions.map((question) => {
+        if (question.id === id) {
+            updatedQuestion = {
                 ...question,
                 title: data.title,
                 body: data.body,
                 tags: data.tags,
-            }
-            : question
-    );
+            };
+            return updatedQuestion;
+        }
+        return question;
+    });
+    return updatedQuestion;
+}

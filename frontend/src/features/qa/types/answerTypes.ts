@@ -1,8 +1,12 @@
-import type {User} from "./userTypes.ts";
+import type {UserDto} from "./userTypes.ts";
 
 export type AnswerDto = {
     id: number;
-    author: User;
+    author: UserDto;
     body: string;
     createdAt: string;
+};
+
+export type CreateAnswerRequest = {
+    body: string;
 };

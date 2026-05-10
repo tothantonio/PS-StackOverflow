@@ -11,3 +11,20 @@ export type QuestionDto = {
     status:string;
 };
 
+export type CreateQuestionRequest = {
+    title: string;
+    body: string;
+    tags?: string[];
+};
+
+export type UpdateQuestionRequest = {
+    title?: string;
+    body?: string;
+    tags?: string[];
+};
+
+export type VoteDirection = 'UP' | 'DOWN';
+
+export type VoteRequest = {
+    direction: VoteDirection;
+};
