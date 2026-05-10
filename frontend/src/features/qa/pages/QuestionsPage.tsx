@@ -1,21 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { QuestionDto } from "../types/questionTypes.ts";
 import QuestionForm from "../components/QuestionForm.tsx";
 import QuestionCard from "../components/QuestionCard.tsx";
 import { getQuestions, createQuestion } from "../../../services/questionService.ts";
 
 function QuestionsPage() {
-    const [questions, setQuestions] = useState<QuestionDto[]>([]);
+    const [questions, setQuestions] = useState<QuestionDto[]>(() => getQuestions());
     const [search, setSearch] = useState("");
     const [newTitle, setNewTitle] = useState("");
     const [newBody, setNewBody] = useState("");
-
-    useEffect(() => {
-        // @ts-ignore
-        const data = getQuestions();
-        // @ts-ignore
-        setQuestions(data);
-    }, []);
 
     function handleAddQuestion() {
         const newQuestion = createQuestion({
@@ -23,7 +16,8 @@ function QuestionsPage() {
             body: newBody,
             tags: ["react"], // Mock tags
         });
-        // @ts-ignore
+
+
         setQuestions([newQuestion, ...questions]);
         setNewTitle("");
         setNewBody("");
@@ -53,9 +47,9 @@ function QuestionsPage() {
             {filtredQuestions.map((q) => (
                 <QuestionCard
                     key={q.id}
+                    id={q.id}
                     title={q.title}
                     body={q.body}
-                    // @ts-ignore
                     author={q.author}
                     tags={q.tags}
                 />

@@ -1,11 +1,11 @@
-import {useState} from "react";
+import { type FormEvent, useState } from "react";
 import {login} from "../services/authService.ts";
 
 function LoginPage(){
     const[username,setUsername] = useState("");
     const[password,setPassword] = useState("");
 
-    const handleSubmit = async (e:any) =>{
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault(); //previne refreshul automat al browserului
 
         const data =await login({username,password});//apeleaza login asteapta raspuns pune raspuns in rez

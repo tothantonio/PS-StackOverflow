@@ -1,10 +1,10 @@
 import QuestionCard from "./QuestionCard.tsx";
-import type {Question} from "../types/questionTypes.ts";
+import type {QuestionDto} from "../types/questionTypes.ts";
 
 
 
 type QuestionListProps = { //ce primeste componneta props
-    questions :Question[];
+    questions :QuestionDto[];
 }
 function QuestionsList({questions} : QuestionListProps){
     return (
@@ -12,6 +12,7 @@ function QuestionsList({questions} : QuestionListProps){
             {questions.map((q) => (
                  <QuestionCard
                     key={q.id}
+                    id={q.id}
                     title={q.title}
                     body={q.body}
                     author={q.author}

@@ -5,7 +5,7 @@ import questionsData from "../features/qa/mockData/questions.json";
 let questions: QuestionDto[] = questionsData as unknown as QuestionDto[];
 
 export function getQuestions(): QuestionDto[] {
-    return questions.sort(
+    return [...questions].sort(
         (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
@@ -35,7 +35,7 @@ export function createQuestion(data: CreateQuestionRequest): QuestionDto {
         id: Date.now(),
         title: data.title,
         body: data.body,
-        tags: data.tags,
+        tags: data.tags ?? [],
         createdAt: new Date().toISOString(),
         status: "RECEIVED",
         voteCount: 0,
@@ -61,13 +61,14 @@ export function updateQuestion(
     let updatedQuestion: QuestionDto | undefined;
     questions = questions.map((question) => {
         if (question.id === id) {
-            updatedQuestion = {
+            const nextQuestion: QuestionDto = {
                 ...question,
                 title: data.title,
                 body: data.body,
-                tags: data.tags,
+                tags: data.tags ?? question.tags,
             };
-            return updatedQuestion;
+            updatedQuestion = nextQuestion;
+            return nextQuestion;
         }
         return question;
     });
