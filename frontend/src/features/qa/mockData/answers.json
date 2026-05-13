@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "questionId": 1,
+    "body": "The cleanest option is to type the component props separately and pass the generic through `forwardRef` with an explicit assertion.\n\n```tsx\ntype InputProps<T> = {\n  value: T;\n  onChange: (value: T) => void;\n};\n\nconst Input = React.forwardRef(function Input<T>(\n  props: InputProps<T>,\n  ref: React.ForwardedRef<HTMLInputElement>\n) {\n  return <input ref={ref} value={String(props.value)} />;\n}) as <T>(\n  props: InputProps<T> & React.RefAttributes<HTMLInputElement>\n) => React.ReactElement;\n```\n\nThis keeps inference at the call site and avoids losing the generic type when React wraps the component.",
+    "createdAt": "2026-04-28T11:20:00",
+    "voteCount": 18,
+    "accepted": true,
+    "author": {
+      "id": 2,
+      "username": "ana"
+    }
+  },
+  {
+    "id": 2,
+    "questionId": 1,
+    "body": "If you do not need generic inference from props, a simpler named props type is usually enough. I would only use the assertion pattern when the component is part of a reusable UI API.",
+    "createdAt": "2026-04-28T12:05:00",
+    "voteCount": 6,
+    "accepted": false,
+    "author": {
+      "id": 3,
+      "username": "marius"
+    }
+  }
+]

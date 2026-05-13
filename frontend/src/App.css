@@ -414,6 +414,27 @@ h3 {
     font-size: 26px;
 }
 
+.answers-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.answers-heading span {
+    border-radius: 999px;
+    background: rgba(161, 93, 102, 0.12);
+    color: var(--primary);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.answers-empty {
+    margin-top: 10px;
+    color: var(--muted);
+}
+
 .answers-list {
     margin-top: 18px;
     display: flex;
@@ -424,6 +445,19 @@ h3 {
 .answer-card.accepted {
     border-color: rgba(161, 93, 102, 0.5);
     background: rgba(161, 93, 102, 0.04);
+}
+
+.answer-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.answer-topline {
+    min-height: 30px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 .accepted-label {
@@ -438,14 +472,55 @@ h3 {
     text-transform: uppercase;
 }
 
+.answer-date {
+    color: var(--muted);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
 .answer-author {
     display: flex;
     justify-content: flex-end;
     margin-top: 18px;
 }
 
-.your-answer-section textarea {
+.answer-author-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 14px;
+    background: var(--cream);
+    padding: 10px 12px;
+}
+
+.answer-author-card strong,
+.answer-author-card span {
+    display: block;
+}
+
+.answer-author-card span {
+    color: #76675f;
+    font-size: 12px;
+}
+
+.answer-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(161, 93, 102, 0.16);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.answer-form {
     margin-top: 14px;
+}
+
+.your-answer-section textarea {
     width: 100%;
     resize: vertical;
     border: 1px solid var(--border);
@@ -457,6 +532,19 @@ h3 {
 
 .your-answer-section button {
     margin-top: 12px;
+}
+
+.answer-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.answer-error {
+    color: var(--primary-dark);
+    font-size: 13px;
+    font-weight: 700;
 }
 
 @media (max-width: 850px) {
