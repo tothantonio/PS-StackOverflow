@@ -1,7 +1,35 @@
 import answersData from "../features/qa/mockData/answers.json";
-import type {AnswerDto, CreateAnswerRequest} from "../features/qa/types/answerTypes.ts";
+import type { AnswerDto, CreateAnswerRequest } from "../features/qa/types/answerTypes.ts";
 
-let answers: AnswerDto[] = answersData as AnswerDto[];
+const STORAGE_KEY = "stackmock.answers";
+
+function readStoredAnswers(): AnswerDto[] {
+    if (typeof localStorage === "undefined") {
+        return answersData as AnswerDto[];
+    }
+
+    const storedAnswers = localStorage.getItem(STORAGE_KEY);
+
+    if (!storedAnswers) {
+        return answersData as AnswerDto[];
+    }
+
+    try {
+        return JSON.parse(storedAnswers) as AnswerDto[];
+    } catch {
+        return answersData as AnswerDto[];
+    }
+}
+
+function saveAnswers(nextAnswers: AnswerDto[]) {
+    answers = nextAnswers;
+
+    if (typeof localStorage !== "undefined") {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextAnswers));
+    }
+}
+
+let answers: AnswerDto[] = readStoredAnswers();
 
 export function getAnswersByQuestionId(questionId: number): AnswerDto[] {
     return answers
@@ -25,11 +53,15 @@ export function createAnswer(data: CreateAnswerRequest): AnswerDto {
         accepted: false,
         author: {
             id: 1,
-            username: "you",
+            username: "alex",
         },
     };
 
-    answers = [newAnswer, ...answers];
+    saveAnswers([newAnswer, ...answers]);
 
     return newAnswer;
+}
+
+export function deleteAnswersForQuestion(questionId: number): void {
+    saveAnswers(answers.filter((answer) => answer.questionId !== questionId));
 }

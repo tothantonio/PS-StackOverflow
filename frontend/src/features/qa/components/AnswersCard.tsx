@@ -53,3 +53,4 @@ function AnswersCard({answer}: AnswersCardProps) {
 }
 
 export default AnswersCard;
+

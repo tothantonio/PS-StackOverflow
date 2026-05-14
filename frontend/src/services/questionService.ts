@@ -1,8 +1,35 @@
-import type {CreateQuestionRequest, QuestionDto} from "../features/qa/types/questionTypes.ts";
+import type { CreateQuestionRequest, QuestionDto } from "../features/qa/types/questionTypes.ts";
 import questionsData from "../features/qa/mockData/questions.json";
 
-// Folosim 'let' în loc de 'const' pentru a putea modifica array-ul
-let questions: QuestionDto[] = questionsData as unknown as QuestionDto[];
+const STORAGE_KEY = "stackmock.questions";
+
+function readStoredQuestions(): QuestionDto[] {
+    if (typeof localStorage === "undefined") {
+        return questionsData as QuestionDto[];
+    }
+
+    const storedQuestions = localStorage.getItem(STORAGE_KEY);
+
+    if (!storedQuestions) {
+        return questionsData as QuestionDto[];
+    }
+
+    try {
+        return JSON.parse(storedQuestions) as QuestionDto[];
+    } catch {
+        return questionsData as QuestionDto[];
+    }
+}
+
+function saveQuestions(nextQuestions: QuestionDto[]) {
+    questions = nextQuestions;
+
+    if (typeof localStorage !== "undefined") {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextQuestions));
+    }
+}
+
+let questions: QuestionDto[] = readStoredQuestions();
 
 export function getQuestions(): QuestionDto[] {
     return [...questions].sort(
@@ -16,7 +43,11 @@ export function getQuestionById(id: number): QuestionDto | undefined {
 }
 
 export function searchQuestions(search: string): QuestionDto[] {
-    const text = search.toLowerCase();
+    const text = search.trim().toLowerCase();
+
+    if (!text) {
+        return getQuestions();
+    }
 
     return getQuestions().filter((question) =>
         question.title.toLowerCase().includes(text) ||
@@ -39,19 +70,19 @@ export function createQuestion(data: CreateQuestionRequest): QuestionDto {
         createdAt: new Date().toISOString(),
         status: "RECEIVED",
         voteCount: 0,
-        author: { // Mock author
+        author: {
             id: 1,
-            username: "alex"
+            username: "alex",
         },
     };
 
-    questions = [newQuestion, ...questions];
+    saveQuestions([newQuestion, ...questions]);
 
     return newQuestion;
 }
 
 export function deleteQuestion(id: number): void {
-    questions = questions.filter((question) => question.id !== id);
+    saveQuestions(questions.filter((question) => question.id !== id));
 }
 
 export function updateQuestion(
@@ -59,7 +90,8 @@ export function updateQuestion(
     data: CreateQuestionRequest
 ): QuestionDto | undefined {
     let updatedQuestion: QuestionDto | undefined;
-    questions = questions.map((question) => {
+
+    const nextQuestions = questions.map((question) => {
         if (question.id === id) {
             const nextQuestion: QuestionDto = {
                 ...question,
@@ -70,7 +102,11 @@ export function updateQuestion(
             updatedQuestion = nextQuestion;
             return nextQuestion;
         }
+
         return question;
     });
+
+    saveQuestions(nextQuestions);
+
     return updatedQuestion;
 }

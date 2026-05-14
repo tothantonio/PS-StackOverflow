@@ -46,3 +46,4 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
 }
 
 export default AnswersForm;
+
