@@ -37,6 +37,13 @@ function AnswersCard({answer}: AnswersCardProps) {
                 </div>
 
                 <Markdown source={answer.body} />
+                {answer.picture && (
+                    <img
+                        className="answer-image"
+                        src={answer.picture}
+                        alt="Answer attachment"
+                    />
+                )}
 
                 <footer className="answer-author">
                     <div className="answer-author-card">

@@ -61,3 +61,11 @@ export function updateAnswer(id: number, body: string, picture?: string): Answer
 
     return updatedAnswer;
 }
+
+// sterge toate answerurile pentru o intrebare
+export function deleteAnswersForQuestion(questionId: number): void {
+
+    answers = answers.filter(
+        (answer) => answer.questionId !== questionId
+    );
+}
