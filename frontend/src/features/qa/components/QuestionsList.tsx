@@ -17,9 +17,11 @@ function QuestionsList({questions} : QuestionListProps){
                     body={q.body}
                     author={q.author}
                     tags={q.tags}
+                    createdAt={q.createdAt}
                 />
             ))}
         </>
     )
 }
 export default QuestionsList;
+

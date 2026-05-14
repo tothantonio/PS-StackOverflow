@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import QuestionForm from "../components/QuestionForm.tsx";
 import { getQuestionById, updateQuestion } from "../../../services/questionService.ts";
 import { getTagNames } from "../../../services/tagService.ts";
+import { isLoggedIn } from "../../../services/authService.ts";
 import { formatTags, parseTags } from "../utils/tags.ts";
 
 function EditQuestionPage() {
@@ -14,6 +15,7 @@ function EditQuestionPage() {
     const [title, setTitle] = useState(() => question?.title ?? "");
     const [body, setBody] = useState(() => question?.body ?? "");
     const [tags, setTags] = useState(() => formatTags(question?.tags ?? []));
+    const [picture, setPicture] = useState(() => question?.picture ?? "");
     const [error, setError] = useState("");
 
     if (!question) {
@@ -30,6 +32,11 @@ function EditQuestionPage() {
     }
 
     function handleSave() {
+        if (!isLoggedIn()) {
+            setError("You must be logged in to edit a question.");
+            return;
+        }
+
         if (!title.trim() || !body.trim()) {
             setError("Title and body are required.");
             return;
@@ -39,6 +46,7 @@ function EditQuestionPage() {
             title: title.trim(),
             body: body.trim(),
             tags: parseTags(tags).filter((tag) => getTagNames().includes(tag)),
+            picture: picture.trim() || undefined,
         });
 
         if (updatedQuestion) {
@@ -64,9 +72,11 @@ function EditQuestionPage() {
                     title={title}
                     body={body}
                     tags={tags}
+                    picture={picture}
                     onTitleChange={setTitle}
                     onBodyChange={setBody}
                     onTagsChange={setTags}
+                    onPictureChange={setPicture}
                     onSubmit={handleSave}
                     submitLabel="Save changes"
                 />
@@ -83,3 +93,4 @@ function EditQuestionPage() {
 }
 
 export default EditQuestionPage;
+

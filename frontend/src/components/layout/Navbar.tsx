@@ -5,7 +5,7 @@ function Navbar() {
         <nav className="navbar">
             <div className="navbar-left">
                 <Link to="/" className="logo">
-                    StackMock
+                    StackOverflow
                 </Link>
 
                 <Link to="/questions">Questions</Link>
@@ -28,3 +28,4 @@ function Navbar() {
 }
 
 export default Navbar;
+

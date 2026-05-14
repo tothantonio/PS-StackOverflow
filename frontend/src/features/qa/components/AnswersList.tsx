@@ -3,9 +3,17 @@ import AnswersCard from "./AnswersCard.tsx";
 
 type AnswersListProps = {
     answers: AnswerDto[];
+    canAccept: boolean;
+    canVoteAnswer: (answer: AnswerDto) => boolean;
+    canEditAnswer: (answer: AnswerDto) => boolean;
+    isSolved: boolean;
+    onVote: (answerId: number, direction: 1 | -1) => void;
+    onDelete: (answerId: number) => void;
+    onAccept: (answerId: number) => void;
+    onEdit: (answerId: number, body: string, picture?: string | null) => void;
 };
 
-function AnswersList({answers}: AnswersListProps) {
+function AnswersList({answers, canAccept, canVoteAnswer, canEditAnswer, isSolved, onVote, onDelete, onAccept, onEdit}: AnswersListProps) {
     if (answers.length === 0) {
         return (
             <section className="answers-section">
@@ -24,7 +32,18 @@ function AnswersList({answers}: AnswersListProps) {
 
             <div className="answers-list">
                 {answers.map((answer) => (
-                    <AnswersCard key={answer.id} answer={answer} />
+                    <AnswersCard
+                        key={answer.id}
+                        answer={answer}
+                        canEdit={canEditAnswer(answer)}
+                        canAccept={canAccept}
+                        canVote={canVoteAnswer(answer)}
+                        isSolved={isSolved}
+                        onVote={onVote}
+                        onDelete={onDelete}
+                        onAccept={onAccept}
+                        onEdit={onEdit}
+                    />
                 ))}
             </div>
         </section>
@@ -32,3 +51,4 @@ function AnswersList({answers}: AnswersListProps) {
 }
 
 export default AnswersList;
+

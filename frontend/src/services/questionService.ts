@@ -1,5 +1,6 @@
 import type { CreateQuestionRequest, QuestionDto } from "../features/qa/types/questionTypes.ts";
 import questionsData from "../features/qa/mockData/questions.json";
+import { getCurrentUser } from "./userService.ts";
 
 const STORAGE_KEY = "stackmock.questions";
 
@@ -50,10 +51,7 @@ export function searchQuestions(search: string): QuestionDto[] {
     }
 
     return getQuestions().filter((question) =>
-        question.title.toLowerCase().includes(text) ||
-        question.body.toLowerCase().includes(text) ||
-        question.author.username.toLowerCase().includes(text) ||
-        question.tags.some((tag) => tag.toLowerCase().includes(text))
+        question.title.toLowerCase().includes(text)
     );
 }
 
@@ -62,6 +60,7 @@ export function getMyQuestions(userId: number): QuestionDto[] {
 }
 
 export function createQuestion(data: CreateQuestionRequest): QuestionDto {
+    const currentUser = getCurrentUser();
     const newQuestion: QuestionDto = {
         id: Date.now(),
         title: data.title,
@@ -70,10 +69,8 @@ export function createQuestion(data: CreateQuestionRequest): QuestionDto {
         createdAt: new Date().toISOString(),
         status: "RECEIVED",
         voteCount: 0,
-        author: {
-            id: 1,
-            username: "alex",
-        },
+        picture: data.picture,
+        author: currentUser,
     };
 
     saveQuestions([newQuestion, ...questions]);
@@ -98,6 +95,7 @@ export function updateQuestion(
                 title: data.title,
                 body: data.body,
                 tags: data.tags ?? question.tags,
+                picture: data.picture ?? question.picture,
             };
             updatedQuestion = nextQuestion;
             return nextQuestion;
@@ -110,3 +108,50 @@ export function updateQuestion(
 
     return updatedQuestion;
 }
+
+export function setQuestionStatus(id: number, status: string): QuestionDto | undefined {
+    let updatedQuestion: QuestionDto | undefined;
+
+    const nextQuestions = questions.map((question) => {
+        if (question.id === id) {
+            updatedQuestion = {
+                ...question,
+                status,
+            };
+            return updatedQuestion;
+        }
+
+        return question;
+    });
+
+    saveQuestions(nextQuestions);
+
+    return updatedQuestion;
+}
+
+export function voteQuestion(id: number, userId: number, direction: 1 | -1): QuestionDto | undefined {
+    let updatedQuestion: QuestionDto | undefined;
+    const voteKey = `stackmock.questionVote.${id}.${userId}`;
+
+    const nextQuestions = questions.map((question) => {
+        if (question.id !== id || question.author.id === userId) {
+            return question;
+        }
+
+        const previousVote = Number(localStorage.getItem(voteKey) ?? 0);
+        const voteDelta = direction - previousVote;
+        localStorage.setItem(voteKey, String(direction));
+
+        updatedQuestion = {
+            ...question,
+            voteCount: question.voteCount + voteDelta,
+        };
+
+        return updatedQuestion;
+    });
+
+    saveQuestions(nextQuestions);
+
+    return updatedQuestion;
+}
+

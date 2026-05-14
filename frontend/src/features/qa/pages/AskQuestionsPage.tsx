@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import QuestionForm from "../components/QuestionForm.tsx";
 import { createQuestion } from "../../../services/questionService.ts";
 import { getTagNames } from "../../../services/tagService.ts";
+import { isLoggedIn } from "../../../services/authService.ts";
 import { parseTags } from "../utils/tags.ts";
 
 function AskQuestionsPage() {
@@ -10,11 +11,22 @@ function AskQuestionsPage() {
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [tags, setTags] = useState("");
+    const [picture, setPicture] = useState("");
     const [error, setError] = useState("");
 
     function handleSubmit() {
+        if (!isLoggedIn()) {
+            setError("You must be logged in to ask a question.");
+            return;
+        }
+
         if (!title.trim() || !body.trim()) {
             setError("Title and body are required.");
+            return;
+        }
+
+        if (parseTags(tags).length === 0) {
+            setError("Choose at least one existing tag.");
             return;
         }
 
@@ -22,6 +34,7 @@ function AskQuestionsPage() {
             title: title.trim(),
             body: body.trim(),
             tags: parseTags(tags).filter((tag) => getTagNames().includes(tag)),
+            picture: picture.trim() || undefined,
         });
 
         navigate(`/questions/${question.id}`);
@@ -41,9 +54,11 @@ function AskQuestionsPage() {
                     title={title}
                     body={body}
                     tags={tags}
+                    picture={picture}
                     onTitleChange={setTitle}
                     onBodyChange={setBody}
                     onTagsChange={setTags}
+                    onPictureChange={setPicture}
                     onSubmit={handleSubmit}
                     submitLabel="Post question"
                 />
@@ -54,3 +69,4 @@ function AskQuestionsPage() {
 }
 
 export default AskQuestionsPage;
+

@@ -8,7 +8,9 @@ type AnswersFormProps = {
 
 function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
     const [body, setBody] = useState("");
+    const [picture, setPicture] = useState("");
     const [error, setError] = useState("");
+    const canPreviewImage = picture.trim().startsWith("http://") || picture.trim().startsWith("https://");
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -18,11 +20,18 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
             return;
         }
 
+        if (picture.trim() && !canPreviewImage) {
+            setError("Image must be a valid http or https URL.");
+            return;
+        }
+
         onSubmit?.({
             questionId,
             body,
+            picture: picture.trim() || undefined,
         });
         setBody("");
+        setPicture("");
         setError("");
     }
 
@@ -36,6 +45,15 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
                     rows={8}
                     placeholder="Write a focused answer. Code blocks can be wrapped in triple backticks."
                 />
+                <input
+                    className="question-form-input"
+                    value={picture}
+                    onChange={(event) => setPicture(event.target.value)}
+                    placeholder="Picture URL, starting with http:// or https://"
+                />
+                {canPreviewImage && (
+                    <img className="post-image image-preview" src={picture.trim()} alt="Answer picture preview" />
+                )}
                 <div className="answer-form-footer">
                     {error && <span className="answer-error">{error}</span>}
                     <button type="submit">Post your answer</button>
@@ -46,4 +64,5 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
 }
 
 export default AnswersForm;
+
 

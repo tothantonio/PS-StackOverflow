@@ -13,3 +13,4 @@ export function mapAnswer(dto: AnswerDto) {
 }
 
 export const mspAnswer = mapAnswer;
+

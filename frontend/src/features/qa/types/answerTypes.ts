@@ -5,7 +5,7 @@ export type AnswerDto = {
     questionId: number;
     author: UserDto;
     body: string;
-    picture?: string;
+    picture?: string | null;
     createdAt: string;
     voteCount: number;
     accepted: boolean;
@@ -14,5 +14,6 @@ export type AnswerDto = {
 export type CreateAnswerRequest = {
     questionId: number;
     body: string;
-    picture?: string;
+    picture?: string | null;
 };
+

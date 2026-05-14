@@ -10,7 +10,7 @@ function HomePage() {
         <main className="home-page">
             <section className="home-hero">
                 <div>
-                    <h1>StackMock</h1>
+                    <h1>StackOverflow</h1>
                     <p>Browse mock questions, write answers, edit your posts, and organize topics with tags.</p>
                 </div>
                 <div className="home-actions">
@@ -42,3 +42,4 @@ function HomePage() {
 }
 
 export default HomePage;
+

@@ -28,10 +28,12 @@ function MyQuestionsPage() {
                                 id={q.id}
                                 title={q.title}
                                 body={q.body}
-                                author={q.author}
-                                tags={q.tags}
-                                voteCount={q.voteCount}
-                            />
+                            author={q.author}
+                            tags={q.tags}
+                            createdAt={q.createdAt}
+                            voteCount={q.voteCount}
+                            picture={q.picture}
+                        />
                         ))
                     )}
                 </div>
@@ -41,3 +43,4 @@ function MyQuestionsPage() {
 }
 
 export default MyQuestionsPage;
+

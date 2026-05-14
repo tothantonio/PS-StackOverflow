@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { TagDto } from "../types/tagTypes.ts";
 import { createTag, getTags } from "../../../services/tagService.ts";
+import { isLoggedIn } from "../../../services/authService.ts";
 
 function CreateTagPage() {
     const [tags, setTags] = useState<TagDto[]>(() => getTags());
@@ -8,6 +9,11 @@ function CreateTagPage() {
     const [message, setMessage] = useState("");
 
     function handleCreateTag() {
+        if (!isLoggedIn()) {
+            setMessage("You must be logged in to create tags.");
+            return;
+        }
+
         const normalizedName = tagName.trim().toLowerCase();
 
         if (!normalizedName) {
@@ -72,3 +78,4 @@ function CreateTagPage() {
 }
 
 export default CreateTagPage;
+

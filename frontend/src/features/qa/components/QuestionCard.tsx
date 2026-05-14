@@ -7,10 +7,20 @@ type QuestionCardProps = {
     body: string;
     author: UserDto;
     tags: string[];
+    createdAt: string;
     voteCount?: number;
+    picture?: string | null;
 };
 
-function QuestionCard({ id, title, body, author, tags, voteCount = 0 }: QuestionCardProps) {
+function QuestionCard({ id, title, body, author, tags, createdAt, voteCount = 0, picture }: QuestionCardProps) {
+    const formattedCreatedAt = new Intl.DateTimeFormat("en", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(new Date(createdAt));
+
     return (
         <article className="question-card">
             <div className="question-stats">
@@ -24,6 +34,7 @@ function QuestionCard({ id, title, body, author, tags, voteCount = 0 }: Question
                     </Link>
                 </h2>
                 <p>{body}</p>
+                {picture && <img className="post-image card-image" src={picture} alt="Question attachment" />}
 
                 <div className="question-card-footer">
                     <div className="tags-list">
@@ -34,7 +45,7 @@ function QuestionCard({ id, title, body, author, tags, voteCount = 0 }: Question
                         ))}
                     </div>
                     <div className="author-badge">
-                        <span>Author</span>
+                        <span>Asked {formattedCreatedAt}</span>
                         <strong>{author.username}</strong>
                     </div>
                 </div>
@@ -48,3 +59,4 @@ function QuestionCard({ id, title, body, author, tags, voteCount = 0 }: Question
 }
 
 export default QuestionCard;
+

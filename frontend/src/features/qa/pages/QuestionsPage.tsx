@@ -4,6 +4,8 @@ import QuestionForm from "../components/QuestionForm.tsx";
 import QuestionCard from "../components/QuestionCard.tsx";
 import { createQuestion, getQuestions, searchQuestions } from "../../../services/questionService.ts";
 import { getTagNames } from "../../../services/tagService.ts";
+import { isLoggedIn } from "../../../services/authService.ts";
+import { getCurrentUser } from "../../../services/userService.ts";
 import { parseTags } from "../utils/tags.ts";
 
 function QuestionsPage() {
@@ -12,11 +14,25 @@ function QuestionsPage() {
     const [newTitle, setNewTitle] = useState("");
     const [newBody, setNewBody] = useState("");
     const [newTags, setNewTags] = useState("");
+    const [newPicture, setNewPicture] = useState("");
+    const [tagFilter, setTagFilter] = useState("");
+    const [userFilter, setUserFilter] = useState("");
+    const [mineOnly, setMineOnly] = useState(false);
     const [formError, setFormError] = useState("");
 
     function handleAddQuestion() {
+        if (!isLoggedIn()) {
+            setFormError("You must be logged in to ask a question.");
+            return;
+        }
+
         if (!newTitle.trim() || !newBody.trim()) {
             setFormError("Title and body are required.");
+            return;
+        }
+
+        if (parseTags(newTags).length === 0) {
+            setFormError("Choose at least one existing tag.");
             return;
         }
 
@@ -24,16 +40,25 @@ function QuestionsPage() {
             title: newTitle.trim(),
             body: newBody.trim(),
             tags: parseTags(newTags).filter((tag) => getTagNames().includes(tag)),
+            picture: newPicture.trim() || undefined,
         });
 
         setQuestions(getQuestions());
         setNewTitle("");
         setNewBody("");
         setNewTags("");
+        setNewPicture("");
         setFormError("");
     }
 
-    const filteredQuestions = search.trim() ? searchQuestions(search) : questions;
+    const currentUser = getCurrentUser();
+    const matchingFilterTags = getTagNames().filter((tag) =>
+        tag.toLowerCase().startsWith(tagFilter.trim().toLowerCase())
+    );
+    const filteredQuestions = (search.trim() ? searchQuestions(search) : questions)
+        .filter((question) => !tagFilter.trim() || question.tags.some((tag) => tag.toLowerCase().startsWith(tagFilter.trim().toLowerCase())))
+        .filter((question) => !userFilter.trim() || question.author.username.toLowerCase().includes(userFilter.trim().toLowerCase()))
+        .filter((question) => !mineOnly || question.author.id === currentUser.id);
 
     return (
         <main className="page-grid">
@@ -52,6 +77,36 @@ function QuestionsPage() {
                     placeholder="Search by title..."
                 />
 
+                <div className="filter-row">
+                    <div className="tag-filter-box">
+                        <input
+                            className="question-form-input"
+                            value={tagFilter}
+                            onChange={(e) => setTagFilter(e.target.value)}
+                            placeholder="Filter by tag..."
+                        />
+                        {tagFilter.trim() && matchingFilterTags.length > 0 && (
+                            <div className="tag-filter-suggestions">
+                                {matchingFilterTags.map((tag) => (
+                                    <button key={tag} type="button" onClick={() => setTagFilter(tag)}>
+                                        #{tag}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <input
+                        className="question-form-input"
+                        value={userFilter}
+                        onChange={(e) => setUserFilter(e.target.value)}
+                        placeholder="Filter by user..."
+                    />
+                    <label className="filter-check">
+                        <input type="checkbox" checked={mineOnly} onChange={(e) => setMineOnly(e.target.checked)} />
+                        My questions
+                    </label>
+                </div>
+
                 <div className="questions-feed">
                     {filteredQuestions.length === 0 ? (
                         <p className="empty-state">No questions found.</p>
@@ -64,7 +119,9 @@ function QuestionsPage() {
                                 body={q.body}
                                 author={q.author}
                                 tags={q.tags}
+                                createdAt={q.createdAt}
                                 voteCount={q.voteCount}
+                                picture={q.picture}
                             />
                         ))
                     )}
@@ -79,9 +136,11 @@ function QuestionsPage() {
                         title={newTitle}
                         body={newBody}
                         tags={newTags}
+                        picture={newPicture}
                         onTitleChange={setNewTitle}
                         onBodyChange={setNewBody}
                         onTagsChange={setNewTags}
+                        onPictureChange={setNewPicture}
                         onSubmit={handleAddQuestion}
                     />
                     {formError && <p className="form-error">{formError}</p>}
@@ -105,3 +164,4 @@ function QuestionsPage() {
 }
 
 export default QuestionsPage;
+

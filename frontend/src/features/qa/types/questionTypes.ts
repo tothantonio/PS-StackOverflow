@@ -9,12 +9,14 @@ export type QuestionDto = {
     createdAt: string;
     voteCount : number;
     status:string;
+    picture?: string | null;
 };
 
 export type CreateQuestionRequest = {
     title: string;
     body: string;
     tags?: string[];
+    picture?: string | null;
 };
 
 export type UpdateQuestionRequest = {
@@ -28,3 +30,4 @@ export type VoteDirection = 'UP' | 'DOWN';
 export type VoteRequest = {
     direction: VoteDirection;
 };
+
