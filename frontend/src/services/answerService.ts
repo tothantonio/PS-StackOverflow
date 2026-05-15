@@ -4,17 +4,17 @@ import { getCurrentUser } from "./userService.ts";
 
 const STORAGE_KEY = "stackmock.answers";
 
-function readStoredAnswers(): AnswerDto[] {
-    const storedAnswers = localStorage.getItem(STORAGE_KEY);
+function readStoredAnswers(): AnswerDto[] {//cit answers din local storage
+    const storedAnswers = localStorage.getItem(STORAGE_KEY); //local storage ul e ca un dictionar(cheie-valoare)
 
     if (!storedAnswers) {
-        return answersData as AnswerDto[];
+        return answersData as AnswerDto[]; //daca nu avem nmc in local strg ia din json
     }
 
     try {
-        return JSON.parse(storedAnswers) as AnswerDto[];
+        return JSON.parse(storedAnswers) as AnswerDto[]; //tr din string in array real
     } catch {
-        return answersData as AnswerDto[];
+        return answersData as AnswerDto[];//err->date din json
     }
 }
 
@@ -82,24 +82,25 @@ export function updateAnswer(id: number, data: { body: string; picture?: string 
     return updatedAnswer;
 }
 
+//Pune accepted: true doar pe answerul ales si pune accepted: false pe celelalte answers de la aceeasi intr
 export function acceptAnswer(id: number, questionId: number): AnswerDto | undefined {
     let acceptedAnswer: AnswerDto | undefined;
 
     const nextAnswers = answers.map((answer) => {
         if (answer.questionId !== questionId) {
-            return answer;
+            return answer;//nu schimb daca answeru nu apart intr curente
         }
 
         const nextAnswer = {
-            ...answer,
-            accepted: answer.id === id,
+            ...answer, //copiez answeru vechi
+            accepted: answer.id === id,//modific campu accepted daca e intr cu id vrut
         };
 
         if (nextAnswer.accepted) {
-            acceptedAnswer = nextAnswer;
+            acceptedAnswer = nextAnswer;//salvez answeru acceptat
         }
 
-        return nextAnswer;
+        return nextAnswer;//pune answeru modificat inv noul array
     });
 
     saveAnswers(nextAnswers);
@@ -109,15 +110,15 @@ export function acceptAnswer(id: number, questionId: number): AnswerDto | undefi
 
 export function voteAnswer(id: number, userId: number, direction: 1 | -1): AnswerDto | undefined {
     let updatedAnswer: AnswerDto | undefined;
-    const voteKey = `stackmock.answerVote.${id}.${userId}`;
+    const voteKey = `stackmock.answerVote.${id}.${userId}`;//cheie unica pt vot
 
-    const nextAnswers = answers.map((answer) => {
-        if (answer.id !== id || answer.author.id === userId) {
+    const nextAnswers = answers.map((answer) => { //trece prin toate answers si creeaza o lista noua
+        if (answer.id !== id || answer.author.id === userId) {//answeru crrt nu e cel modif sau useru incearca sa voteze propriul answer
             return answer;
         }
 
-        const previousVote = Number(localStorage.getItem(voteKey) ?? 0);
-        const voteDelta = direction - previousVote;
+        const previousVote = Number(localStorage.getItem(voteKey) ?? 0);//votu anterior nu exista
+        const voteDelta = direction - previousVote;//calc cu cat trb modif scoru
         localStorage.setItem(voteKey, String(direction));
 
         updatedAnswer = {
