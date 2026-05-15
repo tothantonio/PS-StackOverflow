@@ -1,8 +1,8 @@
 import type { CreateQuestionRequest, QuestionDto } from "../features/qa/types/questionTypes.ts";
-import questionsData from "../features/qa/mockData/questions.json";
+import questionsData from "../features/qa/data/questions.json";
 import { getCurrentUser } from "./userService.ts";
 
-const STORAGE_KEY = "stackmock.questions";
+const STORAGE_KEY = "stackoverflow.questions";
 
 function readStoredQuestions(): QuestionDto[] {
     if (typeof localStorage === "undefined") {
@@ -131,7 +131,7 @@ export function setQuestionStatus(id: number, status: string): QuestionDto | und
 
 export function voteQuestion(id: number, userId: number, direction: 1 | -1): QuestionDto | undefined {
     let updatedQuestion: QuestionDto | undefined;
-    const voteKey = `stackmock.questionVote.${id}.${userId}`;
+    const voteKey = `stackoverflow.questionVote.${id}.${userId}`;
 
     const nextQuestions = questions.map((question) => {
         if (question.id !== id || question.author.id === userId) {

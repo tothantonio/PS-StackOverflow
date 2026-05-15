@@ -10,21 +10,26 @@ type QuestionListProps = { //ce primeste componneta props
 function QuestionsList({questions} : QuestionListProps){
     return (
         <>
-            {questions.map((q) => (
-                 <QuestionCard
-                    key={q.id}
-                    id={q.id}
-                    title={q.title}
-                    body={q.body}
-                    author={q.author}
-                    tags={q.tags}
-                    createdAt={q.createdAt}
-                    status={q.status}
-                    answerCount={getAnswersByQuestionId(q.id).length}
-                    voteCount={q.voteCount}
-                    picture={q.picture}
-                />
-            ))}
+            {questions.map((q) => {
+                const answers = getAnswersByQuestionId(q.id);
+
+                return (
+                    <QuestionCard
+                        key={q.id}
+                        id={q.id}
+                        title={q.title}
+                        body={q.body}
+                        author={q.author}
+                        tags={q.tags}
+                        createdAt={q.createdAt}
+                        status={q.status}
+                        answerCount={answers.length}
+                        hasAcceptedAnswer={answers.some((answer) => answer.accepted)}
+                        voteCount={q.voteCount}
+                        picture={q.picture}
+                    />
+                );
+            })}
         </>
     )
 }

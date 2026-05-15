@@ -1,7 +1,7 @@
-import { clearCurrentUser, findMockUser, setCurrentUser } from "./userService.ts";
+import { clearCurrentUser, findTestUser, setCurrentUser } from "./userService.ts";
 
 export async function login(data: { username: string; password: string }) {
-    const user = findMockUser(data.username, data.password);
+    const user = findTestUser(data.username, data.password);
 
     if (!user) {
         throw new Error("Invalid username or password.");

@@ -1,8 +1,8 @@
-import answersData from "../features/qa/mockData/answers.json";
+import answersData from "../features/qa/data/answers.json";
 import type {AnswerDto, CreateAnswerRequest} from "../features/qa/types/answerTypes.ts";
 import { getCurrentUser } from "./userService.ts";
 
-const STORAGE_KEY = "stackmock.answers";
+const STORAGE_KEY = "stackoverflow.answers";
 
 function readStoredAnswers(): AnswerDto[] {//cit answers din local storage
     const storedAnswers = localStorage.getItem(STORAGE_KEY); //local storage ul e ca un dictionar(cheie-valoare)
@@ -110,7 +110,7 @@ export function acceptAnswer(id: number, questionId: number): AnswerDto | undefi
 
 export function voteAnswer(id: number, userId: number, direction: 1 | -1): AnswerDto | undefined {
     let updatedAnswer: AnswerDto | undefined;
-    const voteKey = `stackmock.answerVote.${id}.${userId}`;//cheie unica pt vot
+    const voteKey = `stackoverflow.answerVote.${id}.${userId}`;//cheie unica pt vot
 
     const nextAnswers = answers.map((answer) => { //trece prin toate answers si creeaza o lista noua
         if (answer.id !== id || answer.author.id === userId) {//answeru crrt nu e cel modif sau useru incearca sa voteze propriul answer

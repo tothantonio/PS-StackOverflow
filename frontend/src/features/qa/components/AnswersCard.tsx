@@ -1,5 +1,6 @@
 import type {AnswerDto} from "../types/answerTypes.ts";
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
+import { Image } from "lucide-react";
 import Markdown from "./Markdown.tsx";
 import VoteColumn from "./VoteColumn.tsx";
 
@@ -39,11 +40,28 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
     const [body, setBody] = useState(answer.body);
     const [picture, setPicture] = useState(answer.picture ?? "");
 
+    function handlePictureFileChange(event: ChangeEvent<HTMLInputElement>) {
+        const file = event.target.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (typeof reader.result === "string") {
+                setPicture(reader.result);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
     return (
         <article className={`answer-card ${answer.accepted ? "accepted" : ""}`}>
             <VoteColumn
                 votes={answer.voteCount}
                 accepted={answer.accepted}
+                picture={answer.picture}
                 disabled={!canVote}
                 onUpvote={() => onVote(answer.id, 1)}
                 onDownvote={() => onVote(answer.id, -1)}
@@ -58,12 +76,20 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                 {isEditing ? (
                     <div className="answer-edit-form">
                         <textarea value={body} onChange={(event) => setBody(event.target.value)} />
-                        <input
-                            className="question-form-input"
-                            value={picture}
-                            onChange={(event) => setPicture(event.target.value)}
-                            placeholder="Picture URL..."
-                        />
+                        <label className="picture-upload">
+                            <span>Picture</span>
+                            <input type="file" accept="image/*" onChange={handlePictureFileChange} />
+                        </label>
+                        {picture && (
+                            <div className="picture-upload-preview">
+                                <span className="picture-indicator icon-only" title="Picture selected">
+                                    <Image size={14} />
+                                </span>
+                                <button className="tag-create-button" type="button" onClick={() => setPicture("")}>
+                                    Remove picture
+                                </button>
+                            </div>
+                        )}
                         <button className="ask-button" onClick={() => {
                             onEdit(answer.id, body, picture.trim() || undefined);
                             setIsEditing(false);
@@ -74,7 +100,6 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                 ) : (
                     <>
                         <Markdown source={answer.body} />
-                        {answer.picture && <img className="post-image" src={answer.picture} alt="Answer attachment" />}
                     </>
                 )}
 
@@ -89,7 +114,9 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                 </div>
                 <footer className="answer-author">
                     <div className="answer-author-card">
-                        <span className="answer-avatar">{getInitials(answer.author.username)}</span>
+                        <span className="answer-avatar">
+                            <span className="avatar-text">{getInitials(answer.author.username)}</span>
+                        </span>
                         <div>
                             <strong>{answer.author.username}</strong>
                             <span>answered {formatAnswerDate(answer.createdAt)}</span>

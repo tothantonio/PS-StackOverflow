@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
+import { Image } from "lucide-react";
 import type { TagDto } from "../types/tagTypes.ts";
 import { createTag, getTags } from "../../../services/tagService.ts";
 import { formatTags, parseTags } from "../../../services/tagUtils.ts";
@@ -61,7 +62,25 @@ function QuestionForm({
         setTagSearch("");
     }
 
-    const canPreviewImage = picture.trim().startsWith("http://") || picture.trim().startsWith("https://");
+    const canPreviewImage = picture.trim().startsWith("data:image/")
+        || picture.trim().startsWith("http://")
+        || picture.trim().startsWith("https://");
+
+    function handlePictureFileChange(event: ChangeEvent<HTMLInputElement>) {
+        const file = event.target.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (typeof reader.result === "string") {
+                onPictureChange(reader.result);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
 
     return (
         <div className="question-form-card">
@@ -79,17 +98,19 @@ function QuestionForm({
                 placeholder="Write your question..."
             />
 
-            <input
-                className="question-form-input"
-                value={picture}
-                onChange={(e) => onPictureChange(e.target.value)}
-                placeholder="Picture URL, starting with http:// or https://"
-            />
-            {picture.trim() && !canPreviewImage && (
-                <p className="form-error">Image must be a valid http or https URL.</p>
-            )}
+            <label className="picture-upload">
+                <span>Picture</span>
+                <input type="file" accept="image/*" onChange={handlePictureFileChange} />
+            </label>
             {canPreviewImage && (
-                <img className="post-image image-preview" src={picture.trim()} alt="Question picture preview" />
+                <div className="picture-upload-preview">
+                    <span className="picture-indicator icon-only" title="Picture selected">
+                        <Image size={14} />
+                    </span>
+                    <button className="tag-create-button" type="button" onClick={() => onPictureChange("")}>
+                        Remove picture
+                    </button>
+                </div>
             )}
 
             <div className="tag-picker">

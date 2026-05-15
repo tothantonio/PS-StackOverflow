@@ -1,16 +1,20 @@
-import { Check, Heart, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Check, ThumbsDown, ThumbsUp } from "lucide-react";
 
 type VoteColumnProps = {
     votes: number;
     accepted?: boolean;
+    picture?: string | null;
     onUpvote?: () => void;
     onDownvote?: () => void;
     disabled?: boolean;
 };
 
-function VoteColumn({ votes, accepted, onUpvote, onDownvote, disabled }: VoteColumnProps) {
+function VoteColumn({ votes, accepted, picture, onUpvote, onDownvote, disabled }: VoteColumnProps) {
     return (
         <div className="vote-column">
+            {picture && (
+                <img className="picture-thumbnail" src={picture} alt="Post attachment" />
+            )}
             <button className="vote-button like-button" disabled={disabled} onClick={onUpvote} title="Like">
                 <ThumbsUp size={20} />
             </button>
@@ -24,10 +28,6 @@ function VoteColumn({ votes, accepted, onUpvote, onDownvote, disabled }: VoteCol
                     <Check size={20} />
                 </span>
             )}
-
-            <button className="save-button" disabled={disabled} title="Save">
-                <Heart size={18} />
-            </button>
         </div>
     );
 }

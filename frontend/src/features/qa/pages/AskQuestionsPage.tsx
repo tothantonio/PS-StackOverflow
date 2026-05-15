@@ -45,7 +45,7 @@ function AskQuestionsPage() {
             <header className="details-header">
                 <h1>Ask Question</h1>
                 <div>
-                    <span>Create a mock question for the local UI.</span>
+                    <span>Create a new question for the community.</span>
                 </div>
             </header>
 

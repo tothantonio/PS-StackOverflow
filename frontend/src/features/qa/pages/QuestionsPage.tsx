@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { QuestionDto } from "../types/questionTypes.ts";
 import QuestionForm from "../components/QuestionForm.tsx";
 import QuestionCard from "../components/QuestionCard.tsx";
@@ -52,14 +53,15 @@ function QuestionsPage() {
         setFormError("");
     }
 
-    const currentUser = getCurrentUser();
+    const loggedIn = isLoggedIn();
+    const currentUser = loggedIn ? getCurrentUser() : undefined;
     const matchingFilterTags = getTagNames().filter((tag) =>
         tag.toLowerCase().startsWith(tagFilter.trim().toLowerCase())
     );
     const filteredQuestions = (search.trim() ? searchQuestions(search) : questions)
         .filter((question) => !tagFilter.trim() || question.tags.some((tag) => tag.toLowerCase().startsWith(tagFilter.trim().toLowerCase())))
         .filter((question) => !userFilter.trim() || question.author.username.toLowerCase().includes(userFilter.trim().toLowerCase()))
-        .filter((question) => !mineOnly || question.author.id === currentUser.id);
+        .filter((question) => !mineOnly || (currentUser && question.author.id === currentUser.id));
 
     return (
         <main className="page-grid">
@@ -102,31 +104,38 @@ function QuestionsPage() {
                         onChange={(e) => setUserFilter(e.target.value)}
                         placeholder="Filter by user..."
                     />
-                    <label className="filter-check">
-                        <input type="checkbox" checked={mineOnly} onChange={(e) => setMineOnly(e.target.checked)} />
-                        My questions
-                    </label>
+                    {loggedIn && (
+                        <label className="filter-check">
+                            <input type="checkbox" checked={mineOnly} onChange={(e) => setMineOnly(e.target.checked)} />
+                            My questions
+                        </label>
+                    )}
                 </div>
 
                 <div className="questions-feed">
                     {filteredQuestions.length === 0 ? (
                         <p className="empty-state">No questions found.</p>
                     ) : (
-                        filteredQuestions.map((q) => (
-                            <QuestionCard
-                                key={q.id}
-                                id={q.id}
-                                title={q.title}
-                                body={q.body}
-                                author={q.author}
-                                tags={q.tags}
-                                createdAt={q.createdAt}
-                                status={q.status}
-                                answerCount={getAnswersByQuestionId(q.id).length}
-                                voteCount={q.voteCount}
-                                picture={q.picture}
-                            />
-                        ))
+                        filteredQuestions.map((q) => {
+                            const answers = getAnswersByQuestionId(q.id);
+
+                            return (
+                                <QuestionCard
+                                    key={q.id}
+                                    id={q.id}
+                                    title={q.title}
+                                    body={q.body}
+                                    author={q.author}
+                                    tags={q.tags}
+                                    createdAt={q.createdAt}
+                                    status={q.status}
+                                    answerCount={answers.length}
+                                    hasAcceptedAnswer={answers.some((answer) => answer.accepted)}
+                                    voteCount={q.voteCount}
+                                    picture={q.picture}
+                                />
+                            );
+                        })
                     )}
                 </div>
             </section>
@@ -134,19 +143,28 @@ function QuestionsPage() {
             <aside className="side-panel">
                 <div className="welcome-card">
                     <h2>Ask a question</h2>
-                    <p>Add a mock question to test the UI flow.</p>
-                    <QuestionForm
-                        title={newTitle}
-                        body={newBody}
-                        tags={newTags}
-                        picture={newPicture}
-                        onTitleChange={setNewTitle}
-                        onBodyChange={setNewBody}
-                        onTagsChange={setNewTags}
-                        onPictureChange={setNewPicture}
-                        onSubmit={handleAddQuestion}
-                    />
-                    {formError && <p className="form-error">{formError}</p>}
+                    {loggedIn ? (
+                        <>
+                            <p>Add a question and choose the tags that describe it.</p>
+                            <QuestionForm
+                                title={newTitle}
+                                body={newBody}
+                                tags={newTags}
+                                picture={newPicture}
+                                onTitleChange={setNewTitle}
+                                onBodyChange={setNewBody}
+                                onTagsChange={setNewTags}
+                                onPictureChange={setNewPicture}
+                                onSubmit={handleAddQuestion}
+                            />
+                            {formError && <p className="form-error">{formError}</p>}
+                        </>
+                    ) : (
+                        <>
+                            <p>Login to ask a question, add tags, vote, or answer.</p>
+                            <Link className="ask-button" to="/login">Login to ask</Link>
+                        </>
+                    )}
                 </div>
                 <div className="info-card">
                     <h3>Stats</h3>

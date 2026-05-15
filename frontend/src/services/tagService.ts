@@ -1,6 +1,6 @@
 import type { TagDto } from "../features/qa/types/tagTypes.ts";
 
-const STORAGE_KEY = "stackmock.tags";
+const STORAGE_KEY = "stackoverflow.tags";
 const initialTags: TagDto[] = [
     { id: 1, name: "react" },
     { id: 2, name: "frontend" },

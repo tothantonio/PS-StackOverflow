@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Image } from "lucide-react";
 import type { UserDto } from "../types/userTypes.ts";
 
 type QuestionCardProps = {
@@ -10,6 +11,7 @@ type QuestionCardProps = {
     createdAt: string;
     status: string;
     answerCount?: number;
+    hasAcceptedAnswer?: boolean;
     voteCount?: number;
     picture?: string | null;
 };
@@ -23,6 +25,7 @@ function QuestionCard({
     createdAt,
     status,
     answerCount = 0,
+    hasAcceptedAnswer = false,
     voteCount = 0,
     picture,
 }: QuestionCardProps) {
@@ -33,8 +36,10 @@ function QuestionCard({
         hour: "2-digit",
         minute: "2-digit",
     }).format(new Date(createdAt));
-    const normalizedStatus = status.toLowerCase().replace("_", "-");
-    const statusLabel = status.toLowerCase().replace("_", " ");
+    const displayStatus = hasAcceptedAnswer ? "SOLVED" : status;
+    const normalizedStatus = displayStatus.toLowerCase().replace("_", "-");
+    const statusLabel = displayStatus.toLowerCase().replace("_", " ");
+    const authorInitials = author.username.slice(0, 2).toUpperCase();
 
     return (
         <article className="question-card">
@@ -56,7 +61,11 @@ function QuestionCard({
                     </Link>
                 </h2>
                 <p>{body}</p>
-                {picture && <img className="post-image card-image" src={picture} alt="Question attachment" />}
+                {picture && (
+                    <span className="picture-indicator icon-only" title="This question has a picture">
+                        <Image size={14} />
+                    </span>
+                )}
 
                 <div className="question-card-footer">
                     <div className="tags-list">
@@ -67,8 +76,13 @@ function QuestionCard({
                         ))}
                     </div>
                     <div className="author-badge">
-                        <span>asked {formattedCreatedAt}</span>
-                        <strong>{author.username}</strong>
+                        <span className="answer-avatar question-author-avatar">
+                            <span className="avatar-text">{authorInitials}</span>
+                        </span>
+                        <div>
+                            <span>asked {formattedCreatedAt}</span>
+                            <strong>{author.username}</strong>
+                        </div>
                     </div>
                 </div>
 

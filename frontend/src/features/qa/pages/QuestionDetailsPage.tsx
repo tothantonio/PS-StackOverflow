@@ -46,7 +46,8 @@ function QuestionDetailsPage() {
     const activeQuestion = currentQuestion;
     const normalizedStatus = activeQuestion.status.toLowerCase().replace("_", "-");
     const statusLabel = activeQuestion.status.toLowerCase().replace("_", " ");
-    const isQuestionClosed = activeQuestion.status === "SOLVED";
+    const hasAcceptedAnswer = answers.some((answer) => answer.accepted);
+    const isQuestionClosed = activeQuestion.status === "SOLVED" || hasAcceptedAnswer;
 
     function handleDeleteQuestion() {
         if (!isLoggedIn() || activeQuestion.author.id !== currentUser.id) {
@@ -135,6 +136,7 @@ function QuestionDetailsPage() {
             <article className="question-detail-card">
                 <VoteColumn
                     votes={activeQuestion.voteCount}
+                    picture={activeQuestion.picture}
                     disabled={!isLoggedIn() || activeQuestion.author.id === currentUser.id}
                     onUpvote={() => handleQuestionVote(1)}
                     onDownvote={() => handleQuestionVote(-1)}
@@ -142,7 +144,6 @@ function QuestionDetailsPage() {
 
                 <div className="detail-content">
                     <Markdown source={activeQuestion.body} />
-                    {activeQuestion.picture && <img className="post-image" src={activeQuestion.picture} alt="Question attachment" />}
 
                     <div className="tags-list detail-tags">
                         {activeQuestion.tags.map((tag) => (

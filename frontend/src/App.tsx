@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import type { ReactNode } from "react";
 import "./App.css";
 import MainLayout from "./layout/MainLayout.tsx";
+import ProtectedRoute from "./layout/ProtectedRoute.tsx";
 import AskQuestionsPage from "./features/qa/pages/AskQuestionsPage.tsx";
 import CreateTagPage from "./features/qa/pages/CreateTagPage.tsx";
 import EditQuestionPage from "./features/qa/pages/EditQuestionPage.tsx";
@@ -12,18 +14,22 @@ import LoginPage from "./pages/LoginPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 
 function App() {
+    function protectedPage(page: ReactNode) {
+        return <ProtectedRoute>{page}</ProtectedRoute>;
+    }
+
     return (
         <BrowserRouter>
             <MainLayout>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/ask" element={<AskQuestionsPage />} />
+                    <Route path="/profile" element={protectedPage(<ProfilePage />)} />
+                    <Route path="/ask" element={protectedPage(<AskQuestionsPage />)} />
                     <Route path="/questions" element={<QuestionsPage />} />
-                    <Route path="/questions/:id/edit" element={<EditQuestionPage />} />
+                    <Route path="/questions/:id/edit" element={protectedPage(<EditQuestionPage />)} />
                     <Route path="/questions/:id" element={<QuestionDetailsPage />} />
-                    <Route path="/my-questions" element={<MyQuestionsPage />} />
+                    <Route path="/my-questions" element={protectedPage(<MyQuestionsPage />)} />
                     <Route path="/myQuestions" element={<Navigate to="/my-questions" replace />} />
                     <Route path="/tags" element={<CreateTagPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />

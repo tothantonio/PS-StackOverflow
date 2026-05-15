@@ -26,7 +26,7 @@ function LoginPage(){
         <main className="login-page">
             <form className="login-card" onSubmit={handleSubmit}>
                 <h1>Login</h1>
-                <p>Mock login for the frontend flow.</p>
+                <p>Sign in to ask, answer, vote, and manage your profile.</p>
                 <p className="login-hint">Test users: alex / alex123, maria / maria123</p>
 
                 <input

@@ -45,10 +45,6 @@ function ProfilePage() {
                     <strong>{totalVotes}</strong>
                     <span>votes</span>
                 </div>
-                <div className="profile-stat">
-                    <strong>mock</strong>
-                    <span>account</span>
-                </div>
             </section>
 
             <section className="profile-panel">

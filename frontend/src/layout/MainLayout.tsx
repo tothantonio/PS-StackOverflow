@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isLoggedIn, logout } from "../services/authService.ts";
 
 type MainLayoutProps = {
@@ -8,7 +8,16 @@ type MainLayoutProps = {
 
 function MainLayout({ children }: MainLayoutProps) {
     const navigate = useNavigate();
+    const location = useLocation();
     const [loggedIn, setLoggedIn] = useState(() => isLoggedIn());
+
+    function getNavClass(path: string) {
+        const isActive = path === "/"
+            ? location.pathname === "/"
+            : location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+        return isActive ? "left-nav-link active" : "left-nav-link";
+    }
 
     useEffect(() => {
         function handleAuthChange() {
@@ -42,15 +51,19 @@ function MainLayout({ children }: MainLayoutProps) {
                     <Link to="/questions" className="back-link">
                         Questions
                     </Link>
-                    <Link to="/my-questions" className="back-link">
-                        My Questions
-                    </Link>
+                    {loggedIn && (
+                        <Link to="/my-questions" className="back-link">
+                            My Questions
+                        </Link>
+                    )}
                     <Link to="/tags" className="back-link">
                         Tags
                     </Link>
-                    <Link to="/ask" className="ask-button">
-                        Ask
-                    </Link>
+                    {loggedIn && (
+                        <Link to="/ask" className="ask-button">
+                            Ask
+                        </Link>
+                    )}
                     <div className="topbar-actions">
                         {loggedIn ? (
                             <button className="topbar-login" type="button" onClick={handleLogout}>
@@ -61,20 +74,26 @@ function MainLayout({ children }: MainLayoutProps) {
                                 Login
                             </Link>
                         )}
-                        <Link to="/profile" className="topbar-account">
-                            My Account
-                        </Link>
+                        {loggedIn && (
+                            <Link to="/profile" className="topbar-account">
+                                My Account
+                            </Link>
+                        )}
                     </div>
                 </div>
             </header>
 
             <div className="app-shell">
                 <aside className="left-nav">
-                    <Link to="/" className="left-nav-link">Home</Link>
-                    <Link to="/questions" className="left-nav-link active">Questions</Link>
-                    <Link to="/my-questions" className="left-nav-link">My Questions</Link>
-                    <Link to="/tags" className="left-nav-link">Tags</Link>
-                    <Link to="/profile" className="left-nav-link">My Profile</Link>
+                    <Link to="/" className={getNavClass("/")}>Home</Link>
+                    <Link to="/questions" className={getNavClass("/questions")}>Questions</Link>
+                    <Link to="/tags" className={getNavClass("/tags")}>Tags</Link>
+                    {loggedIn && (
+                        <>
+                            <Link to="/my-questions" className={getNavClass("/my-questions")}>My Questions</Link>
+                            <Link to="/profile" className={getNavClass("/profile")}>My Profile</Link>
+                        </>
+                    )}
                 </aside>
                 <div className="app-content">
                     {children}

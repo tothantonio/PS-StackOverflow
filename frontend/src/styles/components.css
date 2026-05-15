@@ -455,8 +455,7 @@
     color: var(--muted);
 }
 
-.vote-button,
-.save-button {
+.vote-button {
     width: 36px;
     height: 36px;
     display: inline-flex;
@@ -467,8 +466,7 @@
     background: var(--clear);
 }
 
-.vote-button:disabled,
-.save-button:disabled {
+.vote-button:disabled {
     cursor: not-allowed;
     opacity: 0.45;
 }
@@ -530,6 +528,60 @@
     object-fit: contain;
 }
 
+.picture-upload {
+    margin-top: 10px;
+    display: grid;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.picture-upload input {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--card);
+    color: var(--foreground);
+    padding: 8px;
+}
+
+.picture-upload-preview {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.picture-indicator {
+    width: fit-content;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--soft-panel-background);
+    color: var(--muted);
+    padding: 4px 6px;
+    font-size: 12px;
+}
+
+.picture-indicator.icon-only {
+    width: 28px;
+    height: 28px;
+    justify-content: center;
+    padding: 0;
+}
+
+.picture-thumbnail {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    object-fit: cover;
+    background: var(--soft-panel-background);
+}
+
 .detail-actions button {
     border: 0;
     background: var(--clear);
@@ -571,6 +623,9 @@
 }
 
 .author-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: var(--cream);
     border-radius: 12px;
     padding: 10px 12px;
@@ -693,6 +748,7 @@
 .answer-avatar {
     width: 34px;
     height: 34px;
+    flex: 0 0 34px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
@@ -701,6 +757,13 @@
     color: var(--primary);
     font-size: 12px;
     font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    padding-top: 0;
+}
+
+.avatar-text {
+    transform: translateY(10px);
 }
 
 .answer-form {

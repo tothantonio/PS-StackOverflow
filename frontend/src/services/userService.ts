@@ -1,12 +1,12 @@
 import type { UserDto } from "../features/qa/types/userTypes.ts";
 
-const CURRENT_USER_KEY = "stackmock.currentUser";
+const CURRENT_USER_KEY = "stackoverflow.currentUser";
 
-export type MockUser = UserDto & {
+export type TestUser = UserDto & {
     password: string;
 };
 
-export const mockUsers: MockUser[] = [
+export const testUsers: TestUser[] = [
     {
         id: 1,
         username: "alex",
@@ -33,18 +33,18 @@ export function getCurrentUser(): UserDto {
     const storedUser = localStorage.getItem(CURRENT_USER_KEY);
 
     if (!storedUser) {
-        return mockUsers[0];
+        return testUsers[0];
     }
 
     try {
         return JSON.parse(storedUser) as UserDto;
     } catch {
-        return mockUsers[0];
+        return testUsers[0];
     }
 }
 
-export function findMockUser(username: string, password: string): MockUser | undefined {
-    return mockUsers.find(
+export function findTestUser(username: string, password: string): TestUser | undefined {
+    return testUsers.find(
         (user) => user.username === username.trim() && user.password === password
     );
 }
