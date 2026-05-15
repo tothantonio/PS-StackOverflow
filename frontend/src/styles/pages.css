@@ -32,15 +32,20 @@
 }
 
 .question-stats {
-    width: 86px;
+    width: 94px;
     justify-content: flex-start;
     padding-top: 2px;
     font-size: 13px;
+    gap: 6px;
 }
 
-.question-stats strong {
+.question-stat strong {
     font-size: 18px;
     font-weight: 400;
+}
+
+.question-stat.has-answers strong {
+    color: var(--success-text);
 }
 
 .question-card p {
@@ -176,7 +181,6 @@
     font-size: 12px;
 }
 
-.tag-picker-list,
 .selected-tags {
     margin-top: 8px;
     display: flex;
@@ -184,20 +188,56 @@
     gap: 6px;
 }
 
-.tag-choice {
+.tag-picker-list {
+    max-height: 178px;
+    overflow: auto;
+    margin-top: 8px;
     border: 1px solid var(--border);
     border-radius: 3px;
-    background: var(--cream);
-    color: var(--tag-text);
-    padding: 5px 8px;
-    font-size: 12px;
+    background: var(--card);
+    padding: 4px;
+    display: grid;
+    gap: 2px;
 }
 
-.tag-choice.selected,
+.tag-choice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--clear);
+    color: var(--tag-text);
+    padding: 7px 8px;
+    font-size: 12px;
+    text-align: left;
+}
+
+.tag-choice:hover {
+    background: var(--cream);
+}
+
+.tag-choice.selected {
+    background: var(--link);
+    color: var(--button-text);
+}
+
+.tag-choice strong {
+    font-size: 11px;
+    font-weight: 400;
+}
+
 .selected-tag {
     border-color: var(--link);
     background: var(--link);
     color: var(--button-text);
+}
+
+.tag-picker-empty {
+    color: var(--muted);
+    padding: 8px;
+    font-size: 12px;
 }
 
 .tag-create-button {

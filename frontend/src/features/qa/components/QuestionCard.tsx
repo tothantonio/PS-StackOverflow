@@ -8,11 +8,24 @@ type QuestionCardProps = {
     author: UserDto;
     tags: string[];
     createdAt: string;
+    status: string;
+    answerCount?: number;
     voteCount?: number;
     picture?: string | null;
 };
 
-function QuestionCard({ id, title, body, author, tags, createdAt, voteCount = 0, picture }: QuestionCardProps) {
+function QuestionCard({
+    id,
+    title,
+    body,
+    author,
+    tags,
+    createdAt,
+    status,
+    answerCount = 0,
+    voteCount = 0,
+    picture,
+}: QuestionCardProps) {
     const formattedCreatedAt = new Intl.DateTimeFormat("en", {
         month: "short",
         day: "numeric",
@@ -20,12 +33,21 @@ function QuestionCard({ id, title, body, author, tags, createdAt, voteCount = 0,
         hour: "2-digit",
         minute: "2-digit",
     }).format(new Date(createdAt));
+    const normalizedStatus = status.toLowerCase().replace("_", "-");
+    const statusLabel = status.toLowerCase().replace("_", " ");
 
     return (
         <article className="question-card">
             <div className="question-stats">
-                <strong>{voteCount}</strong>
-                <span>votes</span>
+                <div className="question-stat">
+                    <strong>{voteCount}</strong>
+                    <span>{voteCount === 1 ? "vote" : "votes"}</span>
+                </div>
+                <div className={answerCount > 0 ? "question-stat has-answers" : "question-stat"}>
+                    <strong>{answerCount}</strong>
+                    <span>{answerCount === 1 ? "answer" : "answers"}</span>
+                </div>
+                <span className={`status-badge status-${normalizedStatus}`}>{statusLabel}</span>
             </div>
             <div className="question-card-content">
                 <h2>
@@ -45,7 +67,7 @@ function QuestionCard({ id, title, body, author, tags, createdAt, voteCount = 0,
                         ))}
                     </div>
                     <div className="author-badge">
-                        <span>Asked {formattedCreatedAt}</span>
+                        <span>asked {formattedCreatedAt}</span>
                         <strong>{author.username}</strong>
                     </div>
                 </div>

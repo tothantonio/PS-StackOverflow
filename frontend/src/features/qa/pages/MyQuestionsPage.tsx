@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getMyQuestions } from "../../../services/questionService.ts";
 import type { QuestionDto } from "../types/questionTypes.ts";
 import QuestionCard from "../components/QuestionCard.tsx";
+import { getAnswersByQuestionId } from "../../../services/answerService.ts";
 
 const MOCK_USER_ID = 1;
 
@@ -28,12 +29,14 @@ function MyQuestionsPage() {
                                 id={q.id}
                                 title={q.title}
                                 body={q.body}
-                            author={q.author}
-                            tags={q.tags}
-                            createdAt={q.createdAt}
-                            voteCount={q.voteCount}
-                            picture={q.picture}
-                        />
+                                author={q.author}
+                                tags={q.tags}
+                                createdAt={q.createdAt}
+                                status={q.status}
+                                answerCount={getAnswersByQuestionId(q.id).length}
+                                voteCount={q.voteCount}
+                                picture={q.picture}
+                            />
                         ))
                     )}
                 </div>

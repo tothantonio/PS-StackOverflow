@@ -1,5 +1,6 @@
 import QuestionCard from "./QuestionCard.tsx";
 import type {QuestionDto} from "../types/questionTypes.ts";
+import { getAnswersByQuestionId } from "../../../services/answerService.ts";
 
 
 
@@ -18,6 +19,10 @@ function QuestionsList({questions} : QuestionListProps){
                     author={q.author}
                     tags={q.tags}
                     createdAt={q.createdAt}
+                    status={q.status}
+                    answerCount={getAnswersByQuestionId(q.id).length}
+                    voteCount={q.voteCount}
+                    picture={q.picture}
                 />
             ))}
         </>

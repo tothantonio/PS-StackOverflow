@@ -143,19 +143,24 @@
     border: 1px solid var(--border);
     border-radius: 3px;
     background: var(--card);
-    padding: 6px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    box-shadow: 0 8px 18px -14px var(--shadow-color);
+    padding: 4px;
+    display: grid;
+    gap: 2px;
 }
 
 .tag-filter-suggestions button {
     border: 0;
     border-radius: 3px;
-    background: var(--cream);
+    background: var(--clear);
     color: var(--tag-text);
-    padding: 4px 6px;
+    padding: 6px 8px;
+    text-align: left;
     font-size: 12px;
+}
+
+.tag-filter-suggestions button:hover {
+    background: var(--cream);
 }
 
 .questions-feed {
@@ -191,9 +196,28 @@
     color: var(--muted);
 }
 
-.question-stats strong {
+.question-stat {
+    width: 100%;
+    display: grid;
+    gap: 2px;
+    justify-items: center;
+    padding: 5px 4px;
+    border-radius: 3px;
+}
+
+.question-stat.has-answers {
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+}
+
+.question-stats strong,
+.question-stat strong {
     font-size: 22px;
     color: var(--foreground);
+}
+
+.question-stat span {
+    font-size: 12px;
 }
 
 .question-card-content {
@@ -235,6 +259,33 @@
     padding: 5px 8px;
     font-size: 12px;
     font-weight: 700;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--neutral-border);
+    border-radius: 3px;
+    background: var(--neutral-background);
+    color: var(--neutral-text);
+    padding: 4px 6px;
+    font-size: 11px;
+    line-height: 1.1;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.status-in-progress {
+    border-color: var(--warning-border);
+    background: var(--warning-background);
+    color: var(--warning-text);
+}
+
+.status-solved {
+    border-color: var(--success-border);
+    background: var(--success-background);
+    color: var(--success-text);
 }
 
 .side-panel {
@@ -408,9 +459,18 @@
 .save-button {
     width: 36px;
     height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--clear);
+}
+
+.vote-button:disabled,
+.save-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
 }
 
 .vote-count {
@@ -554,7 +614,11 @@
 }
 
 .answers-empty {
-    margin-top: 10px;
+    margin-top: 12px;
+    border: 1px dashed var(--border);
+    border-radius: 3px;
+    background: var(--soft-panel-background);
+    padding: 14px;
     color: var(--muted);
 }
 
@@ -756,6 +820,13 @@
 .home-card span,
 .empty-state {
     color: var(--muted);
+}
+
+.empty-state {
+    border: 1px dashed var(--border);
+    border-radius: 3px;
+    background: var(--soft-panel-background);
+    padding: 16px;
 }
 
 .login-page {

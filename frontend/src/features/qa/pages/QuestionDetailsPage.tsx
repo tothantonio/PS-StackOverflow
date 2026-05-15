@@ -44,6 +44,8 @@ function QuestionDetailsPage() {
     }
 
     const activeQuestion = currentQuestion;
+    const normalizedStatus = activeQuestion.status.toLowerCase().replace("_", "-");
+    const statusLabel = activeQuestion.status.toLowerCase().replace("_", " ");
 
     function handleDeleteQuestion() {
         if (!isLoggedIn() || activeQuestion.author.id !== currentUser.id) {
@@ -124,7 +126,7 @@ function QuestionDetailsPage() {
                 <h1>{activeQuestion.title}</h1>
                 <div>
                     <span>Asked {new Date(activeQuestion.createdAt).toLocaleString()}</span>
-                    <span>Status: {activeQuestion.status}</span>
+                    <span className={`status-badge status-${normalizedStatus}`}>{statusLabel}</span>
                     <span>Author: {activeQuestion.author.username}</span>
                 </div>
             </header>

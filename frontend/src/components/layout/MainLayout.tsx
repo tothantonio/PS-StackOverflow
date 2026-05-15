@@ -37,7 +37,7 @@ function MainLayout({ children }: MainLayoutProps) {
                 <div className="site-header-inner">
                     <Link to="/" className="site-logo">
                         <span className="site-logo-mark">stack</span>
-                        <span className="site-logo-word">mock</span>
+                        <span className="site-logo-word">overflow</span>
                     </Link>
                     <Link to="/questions" className="back-link">
                         Questions

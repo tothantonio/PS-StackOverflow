@@ -27,6 +27,15 @@
     --topbar-shadow: #0C0D0E2E;
     --button-text: #46a4b5;
     --clear: transparent;
+    --success-background: #edf8f0;
+    --success-border: #5eba7d;
+    --success-text: #2f6f44;
+    --warning-background: #fbf3d5;
+    --warning-border: #f1b37a;
+    --warning-text: #8a4f08;
+    --neutral-background: #e1ecf4;
+    --neutral-border: #a6c8df;
+    --neutral-text: #39739d;
 }
 
 * {

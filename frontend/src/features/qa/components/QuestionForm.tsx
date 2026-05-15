@@ -101,9 +101,9 @@ function QuestionForm({
                     placeholder="Start typing a tag name..."
                 />
 
-                <div className="tag-picker-list">
+                <div className="tag-picker-list" role="listbox" aria-label="Available tags">
                     {filteredTags.length === 0 ? (
-                        <span className="empty-state">No existing tags start with that text.</span>
+                        <span className="tag-picker-empty">No existing tags start with that text.</span>
                     ) : (
                         filteredTags.map((tag) => (
                             <button
@@ -112,7 +112,8 @@ function QuestionForm({
                                 type="button"
                                 onClick={() => handleToggleTag(tag.name)}
                             >
-                                #{tag.name}
+                                <span>#{tag.name}</span>
+                                {selectedTags.includes(tag.name) && <strong>selected</strong>}
                             </button>
                         ))
                     )}
