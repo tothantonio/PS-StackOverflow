@@ -15,7 +15,7 @@ type AnswersCardProps = {
     onEdit: (answerId: number, body: string, picture?: string | null) => void;
 };
 
-function formatAnswerDate(value: string) {
+function formatAnswerDate(value: string) {// tr data din string intr o data reala
     return new Intl.DateTimeFormat("en", {
         month: "short",
         day: "numeric",
