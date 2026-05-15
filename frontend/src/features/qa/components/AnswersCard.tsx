@@ -5,7 +5,7 @@ import VoteColumn from "./VoteColumn.tsx";
 
 type AnswersCardProps = {
     answer: AnswerDto;
-    canEdit: boolean;
+    canEdit: boolean;// daca userul poate edita sau sterge
     canAccept: boolean;
     canVote: boolean;
     isSolved: boolean;
