@@ -4,7 +4,7 @@ import QuestionForm from "../components/QuestionForm.tsx";
 import { getQuestionById, updateQuestion } from "../../../services/questionService.ts";
 import { getTagNames } from "../../../services/tagService.ts";
 import { isLoggedIn } from "../../../services/authService.ts";
-import { formatTags, parseTags } from "../utils/tags.ts";
+import { formatTags, parseTags } from "../tags.ts";
 
 function EditQuestionPage() {
     const navigate = useNavigate();

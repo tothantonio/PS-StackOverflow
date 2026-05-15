@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { isLoggedIn, logout } from "../../services/authService.ts";
+import { isLoggedIn, logout } from "../services/authService.ts";
 
 type MainLayoutProps = {
     children: ReactNode;

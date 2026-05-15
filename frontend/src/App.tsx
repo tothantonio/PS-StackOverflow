@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import MainLayout from "./components/layout/MainLayout.tsx";
+import MainLayout from "./layout/MainLayout.tsx";
 import AskQuestionsPage from "./features/qa/pages/AskQuestionsPage.tsx";
 import CreateTagPage from "./features/qa/pages/CreateTagPage.tsx";
 import EditQuestionPage from "./features/qa/pages/EditQuestionPage.tsx";

@@ -7,7 +7,7 @@ import { getTagNames } from "../../../services/tagService.ts";
 import { getAnswersByQuestionId } from "../../../services/answerService.ts";
 import { isLoggedIn } from "../../../services/authService.ts";
 import { getCurrentUser } from "../../../services/userService.ts";
-import { parseTags } from "../utils/tags.ts";
+import { parseTags } from "../tags.ts";
 
 function QuestionsPage() {
     const [questions, setQuestions] = useState<QuestionDto[]>(() => getQuestions());

@@ -46,7 +46,7 @@ function QuestionDetailsPage() {
     const activeQuestion = currentQuestion;
     const normalizedStatus = activeQuestion.status.toLowerCase().replace("_", "-");
     const statusLabel = activeQuestion.status.toLowerCase().replace("_", " ");
-    const isQuestionClosed = activeQuestion.status === "SOLVED" || activeQuestion.status === "COMPLETED";
+    const isQuestionClosed = activeQuestion.status === "SOLVED";
 
     function handleDeleteQuestion() {
         if (!isLoggedIn() || activeQuestion.author.id !== currentUser.id) {
@@ -69,7 +69,7 @@ function QuestionDetailsPage() {
         }
 
         if (isQuestionClosed) {
-            setMessage("This question is completed. No more answers can be added.");
+            setMessage("This question is solved. No more answers can be added.");
             return;
         }
 
@@ -194,7 +194,7 @@ function QuestionDetailsPage() {
             />
 
             {isQuestionClosed ? (
-                <p className="answers-empty">This question is completed, so no more answers can be added.</p>
+                <p className="answers-empty">This question is solved, so no more answers can be added.</p>
             ) : (
                 <AnswersForm questionId={activeQuestion.id} onSubmit={handleCreateAnswer} />
             )}
