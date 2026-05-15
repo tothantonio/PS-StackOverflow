@@ -1,7 +1,5 @@
 import type { UserDto } from "../features/qa/types/userTypes.ts";
 
-const CURRENT_USER_KEY = "stackoverflow.currentUser";
-
 export type TestUser = UserDto & {
     password: string;
 };
@@ -21,26 +19,18 @@ export const testUsers: TestUser[] = [
     },
 ];
 
+let currentUser: UserDto = testUsers[0];
+
 export function setCurrentUser(user: UserDto): void {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    currentUser = user;
 }
 
 export function clearCurrentUser(): void {
-    localStorage.removeItem(CURRENT_USER_KEY);
+    currentUser = testUsers[0];
 }
 
 export function getCurrentUser(): UserDto {
-    const storedUser = localStorage.getItem(CURRENT_USER_KEY);
-
-    if (!storedUser) {
-        return testUsers[0];
-    }
-
-    try {
-        return JSON.parse(storedUser) as UserDto;
-    } catch {
-        return testUsers[0];
-    }
+    return currentUser;
 }
 
 export function findTestUser(username: string, password: string): TestUser | undefined {

@@ -1,5 +1,7 @@
 import { clearCurrentUser, findTestUser, setCurrentUser } from "./userService.ts";
 
+let authToken = "";
+
 export async function login(data: { username: string; password: string }) {
     const user = findTestUser(data.username, data.password);
 
@@ -16,19 +18,19 @@ export async function login(data: { username: string; password: string }) {
         },
     };
 
-    localStorage.setItem("token", result.token);
+    authToken = result.token;
     setCurrentUser(result.user);
 
     return result;
 }
 
 export function logout() {
-    localStorage.removeItem("token");
+    authToken = "";
     clearCurrentUser();
 }
 
 export function isLoggedIn(): boolean {
-    return Boolean(localStorage.getItem("token"));
+    return Boolean(authToken);
 }
 
 export function requireLogin(): boolean {

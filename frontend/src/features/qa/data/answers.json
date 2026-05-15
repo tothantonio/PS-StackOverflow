@@ -67,7 +67,7 @@
   {
     "id": 6,
     "questionId": 3,
-    "body": "I would keep the auth token in memory or localStorage, depending on how strict the app needs to be.",
+    "body": "I would keep the auth token in memory, depending on how strict the app needs to be.",
     "picture": "",
     "createdAt": "2026-04-30T14:25:00",
     "voteCount": 3,
@@ -80,7 +80,7 @@
   {
     "id": 7,
     "questionId": 3,
-    "body": "For a school project, localStorage is probably fine, but in a real app you should be more careful.",
+    "body": "For a school project, in-memory auth is probably fine, but in a real app you should be more careful.",
     "picture": "",
     "createdAt": "2026-04-30T15:00:00",
     "voteCount": -1,

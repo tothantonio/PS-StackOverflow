@@ -2,35 +2,12 @@ import type { CreateQuestionRequest, QuestionDto } from "../features/qa/types/qu
 import questionsData from "../features/qa/data/questions.json";
 import { getCurrentUser } from "./userService.ts";
 
-const STORAGE_KEY = "stackoverflow.questions";
-
-function readStoredQuestions(): QuestionDto[] {
-    if (typeof localStorage === "undefined") {
-        return questionsData as QuestionDto[];
-    }
-
-    const storedQuestions = localStorage.getItem(STORAGE_KEY);
-
-    if (!storedQuestions) {
-        return questionsData as QuestionDto[];
-    }
-
-    try {
-        return JSON.parse(storedQuestions) as QuestionDto[];
-    } catch {
-        return questionsData as QuestionDto[];
-    }
-}
-
 function saveQuestions(nextQuestions: QuestionDto[]) {
     questions = nextQuestions;
-
-    if (typeof localStorage !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextQuestions));
-    }
 }
 
-let questions: QuestionDto[] = readStoredQuestions();
+let questions: QuestionDto[] = questionsData as QuestionDto[];
+const questionVotesByUser: Record<string, number> = {};
 
 export function getQuestions(): QuestionDto[] {
     return [...questions].sort(
@@ -138,9 +115,9 @@ export function voteQuestion(id: number, userId: number, direction: 1 | -1): Que
             return question;
         }
 
-        const previousVote = Number(localStorage.getItem(voteKey) ?? 0);
+        const previousVote = questionVotesByUser[voteKey] ?? 0;
         const voteDelta = direction - previousVote;
-        localStorage.setItem(voteKey, String(direction));
+        questionVotesByUser[voteKey] = direction;
 
         updatedQuestion = {
             ...question,

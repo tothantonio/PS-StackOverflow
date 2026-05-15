@@ -1,13 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import QuestionForm from "../features/qa/components/QuestionForm.tsx";
 
 describe("QuestionForm", () => {
-    beforeEach(() => {
-        localStorage.clear();
-    });
-
     test("lets the user choose an existing tag", async () => {
         const user = userEvent.setup();
         const onTagsChange = vi.fn();

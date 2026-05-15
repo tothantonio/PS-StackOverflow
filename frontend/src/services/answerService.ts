@@ -2,28 +2,12 @@ import answersData from "../features/qa/data/answers.json";
 import type {AnswerDto, CreateAnswerRequest} from "../features/qa/types/answerTypes.ts";
 import { getCurrentUser } from "./userService.ts";
 
-const STORAGE_KEY = "stackoverflow.answers";
-
-function readStoredAnswers(): AnswerDto[] {//cit answers din local storage
-    const storedAnswers = localStorage.getItem(STORAGE_KEY); //local storage ul e ca un dictionar(cheie-valoare)
-
-    if (!storedAnswers) {
-        return answersData as AnswerDto[]; //daca nu avem nmc in local strg ia din json
-    }
-
-    try {
-        return JSON.parse(storedAnswers) as AnswerDto[]; //tr din string in array real
-    } catch {
-        return answersData as AnswerDto[];//err->date din json
-    }
-}
-
 function saveAnswers(nextAnswers: AnswerDto[]) {
     answers = nextAnswers;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextAnswers));
 }
 
-let answers: AnswerDto[] = readStoredAnswers();
+let answers: AnswerDto[] = answersData as AnswerDto[];
+const answerVotesByUser: Record<string, number> = {};
 
 export function getAnswersByQuestionId(questionId: number): AnswerDto[] {
     return answers
@@ -110,16 +94,16 @@ export function acceptAnswer(id: number, questionId: number): AnswerDto | undefi
 
 export function voteAnswer(id: number, userId: number, direction: 1 | -1): AnswerDto | undefined {
     let updatedAnswer: AnswerDto | undefined;
-    const voteKey = `stackoverflow.answerVote.${id}.${userId}`;//cheie unica pt vot
+    const voteKey = `stackoverflow.answerVote.${id}.${userId}`;//cheie unica pt vot in memoria aplicatiei
 
     const nextAnswers = answers.map((answer) => { //trece prin toate answers si creeaza o lista noua
         if (answer.id !== id || answer.author.id === userId) {//answeru crrt nu e cel modif sau useru incearca sa voteze propriul answer
             return answer;
         }
 
-        const previousVote = Number(localStorage.getItem(voteKey) ?? 0);//votu anterior nu exista
+        const previousVote = answerVotesByUser[voteKey] ?? 0;//votu anterior nu exista
         const voteDelta = direction - previousVote;//calc cu cat trb modif scoru
-        localStorage.setItem(voteKey, String(direction));
+        answerVotesByUser[voteKey] = direction;
 
         updatedAnswer = {
             ...answer,

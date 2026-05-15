@@ -14,7 +14,6 @@ function LoginPage(){
         try {
             const data = await login({username,password});//apeleaza login asteapta raspuns pune raspuns in rez
 
-            localStorage.setItem("token", data.token)//salveaza token in browser
             setMessage(`Logged in as ${data.user.username}.`);
             window.dispatchEvent(new Event("auth-change"));
             navigate("/questions");

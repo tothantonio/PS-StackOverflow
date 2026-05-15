@@ -1,39 +1,16 @@
 import type { TagDto } from "../features/qa/types/tagTypes.ts";
 
-const STORAGE_KEY = "stackoverflow.tags";
 const initialTags: TagDto[] = [
     { id: 1, name: "react" },
     { id: 2, name: "frontend" },
     { id: 3, name: "typescript" },
 ];
 
-function readStoredTags(): TagDto[] {
-    if (typeof localStorage === "undefined") {
-        return initialTags;
-    }
-
-    const storedTags = localStorage.getItem(STORAGE_KEY);
-
-    if (!storedTags) {
-        return initialTags;
-    }
-
-    try {
-        return JSON.parse(storedTags) as TagDto[];
-    } catch {
-        return initialTags;
-    }
-}
-
 function saveTags(nextTags: TagDto[]) {
     tags = nextTags;
-
-    if (typeof localStorage !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextTags));
-    }
 }
 
-let tags: TagDto[] = readStoredTags();
+let tags: TagDto[] = initialTags;
 
 function normalizeTagName(name: string): string {
     return name.trim().toLowerCase();

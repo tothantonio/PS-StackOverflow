@@ -1,9 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isLoggedIn, logout } from "../services/authService.ts";
-
+//layout comun header/meniu/continut page
 type MainLayoutProps = {
-    children: ReactNode;
+    children: ReactNode;  //pagina curenta
 };
 
 function MainLayout({ children }: MainLayoutProps) {
