@@ -26,11 +26,11 @@ function formatAnswerDate(value: string) {
 
 function getInitials(username: string) {
     return username
-        .split(/\s+/)
-        .filter(Boolean)
-        .map((part) => part[0])
-        .join("")
-        .slice(0, 2)
+        .split(/\s+/)//imparte textu dupa spatii
+        .filter(Boolean)//elimina elem goale
+        .map((part) => part[0])//ia prima litera din fiecare cuv
+        .join("")//uneste literele intr un sg sting: ["A", "P"]->"AP"
+        .slice(0, 2)//pastr doar primele 2 litere
         .toUpperCase();
 }
 
