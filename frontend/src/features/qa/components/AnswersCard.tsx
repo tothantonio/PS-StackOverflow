@@ -9,8 +9,8 @@ type AnswersCardProps = {
     canAccept: boolean;
     canVote: boolean;
     isSolved: boolean;
-    onVote: (answerId: number, direction: 1 | -1) => void;
-    onDelete: (answerId: number) => void;
+    onVote: (answerId: number, direction: 1 | -1) => void; // functie pentru vot
+    onDelete: (answerId: number) => void;// functie pentru delete
     onAccept: (answerId: number) => void;
     onEdit: (answerId: number, body: string, picture?: string | null) => void;
 };
