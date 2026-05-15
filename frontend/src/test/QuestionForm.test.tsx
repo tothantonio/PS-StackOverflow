@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import QuestionForm from "./QuestionForm.tsx";
+import QuestionForm from "../features/qa/components/QuestionForm.tsx";
 
 describe("QuestionForm", () => {
     beforeEach(() => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { formatTags, parseTags } from "./tags.ts";
+import { formatTags, parseTags } from "../services/tagUtils.ts";
 
 describe("tag helpers", () => {
     test("parses comma separated tags", () => {

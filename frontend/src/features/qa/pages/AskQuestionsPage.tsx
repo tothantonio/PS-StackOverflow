@@ -4,7 +4,7 @@ import QuestionForm from "../components/QuestionForm.tsx";
 import { createQuestion } from "../../../services/questionService.ts";
 import { getTagNames } from "../../../services/tagService.ts";
 import { isLoggedIn } from "../../../services/authService.ts";
-import { parseTags } from "../tags.ts";
+import { parseTags } from "../../../services/tagUtils.ts";
 
 function AskQuestionsPage() {
     const navigate = useNavigate();
