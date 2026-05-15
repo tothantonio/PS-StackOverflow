@@ -46,6 +46,7 @@ function QuestionDetailsPage() {
     const activeQuestion = currentQuestion;
     const normalizedStatus = activeQuestion.status.toLowerCase().replace("_", "-");
     const statusLabel = activeQuestion.status.toLowerCase().replace("_", " ");
+    const isQuestionClosed = activeQuestion.status === "SOLVED" || activeQuestion.status === "COMPLETED";
 
     function handleDeleteQuestion() {
         if (!isLoggedIn() || activeQuestion.author.id !== currentUser.id) {
@@ -67,8 +68,8 @@ function QuestionDetailsPage() {
             return;
         }
 
-        if (activeQuestion.status === "SOLVED") {
-            setMessage("This question is solved. No more answers can be added.");
+        if (isQuestionClosed) {
+            setMessage("This question is completed. No more answers can be added.");
             return;
         }
 
@@ -179,7 +180,7 @@ function QuestionDetailsPage() {
                 canAccept={isLoggedIn() && activeQuestion.author.id === currentUser.id}
                 canVoteAnswer={(answer) => isLoggedIn() && answer.author.id !== currentUser.id}
                 canEditAnswer={(answer) => isLoggedIn() && answer.author.id === currentUser.id}
-                isSolved={activeQuestion.status === "SOLVED"}
+                isSolved={isQuestionClosed}
                 onVote={handleAnswerVote}
                 onDelete={(answerId) => {
                     deleteAnswer(answerId);
@@ -192,7 +193,9 @@ function QuestionDetailsPage() {
                 }}
             />
 
-            {activeQuestion.status !== "SOLVED" && (
+            {isQuestionClosed ? (
+                <p className="answers-empty">This question is completed, so no more answers can be added.</p>
+            ) : (
                 <AnswersForm questionId={activeQuestion.id} onSubmit={handleCreateAnswer} />
             )}
         </main>
