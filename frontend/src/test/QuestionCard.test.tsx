@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, test } from "vitest";
-import QuestionCard from "./QuestionCard.tsx";
+import QuestionCard from "../features/qa/components/QuestionCard.tsx";
 
 describe("QuestionCard", () => {
     test("shows the question information", () => {

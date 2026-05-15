@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { TagDto } from "../types/tagTypes.ts";
 import { createTag, getTags } from "../../../services/tagService.ts";
-import { formatTags, parseTags } from "../tags.ts";
+import { formatTags, parseTags } from "../../../services/tagUtils.ts";
 
 type QuestionFormProps = {
     title: string;
