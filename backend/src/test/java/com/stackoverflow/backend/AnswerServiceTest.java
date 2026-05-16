@@ -6,7 +6,7 @@ import com.stackoverflow.backend.entity.User;
 import com.stackoverflow.backend.repository.AnswerRepository;
 import com.stackoverflow.backend.repository.QuestionRepository;
 import com.stackoverflow.backend.repository.UserRepository;
-import com.stackoverflow.backend.service.AnswerService;
+import com.stackoverflow.backend.services.AnswerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

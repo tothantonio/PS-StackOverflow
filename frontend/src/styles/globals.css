@@ -1,0 +1,73 @@
+:root {
+    --background: #f1f2f3;
+    --foreground: #232629;
+    --card: #ffffff;
+    --cream: #e1ecf4;
+    --primary-dark: #042b37;
+    --primary: #19768c;
+    --border: #d6d9dc;
+    --muted: #6a737c;
+    --header-background: #ffffff;
+    --input-background: #ffffff;
+    --soft-panel-background: #f8f9f9;
+    --shadow-color: #0C0D0E1F;
+    --tag-text: #39739d;
+    --welcome-text: #3b4045;
+    --body-text: #232629;
+    --code-background: #f6f6f6;
+    --code-text: #2f3337;
+    --author-label: #6a737c;
+    --primary-soft: #fbf3d5;
+    --primary-softer: #fdf7e2;
+    --primary-faint: #fff8ee;
+    --primary-border: #f1b37a;
+    --avatar-background: #e1ecf4;
+    --link: #0074cc;
+    --link-hover: #0a95ff;
+    --topbar-shadow: #0C0D0E2E;
+    --button-text: #46a4b5;
+    --clear: transparent;
+    --success-background: #edf8f0;
+    --success-border: #5eba7d;
+    --success-text: #2f6f44;
+    --warning-background: #fbf3d5;
+    --warning-border: #f1b37a;
+    --warning-text: #8a4f08;
+    --neutral-background: #e1ecf4;
+    --neutral-border: #a6c8df;
+    --neutral-text: #39739d;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    letter-spacing: -0.03em;
+}
+

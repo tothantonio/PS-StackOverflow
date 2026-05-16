@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "questionId": 1,
+    "body": "I used a type assertion after forwardRef and it worked for me.",
+    "picture": "",
+    "createdAt": "2026-04-28T11:20:00",
+    "voteCount": 8,
+    "accepted": true,
+    "author": {
+      "id": 2,
+      "username": "ana"
+    }
+  },
+  {
+    "id": 2,
+    "questionId": 1,
+    "body": "React can lose the generic type after wrapping the component, so I think the assertion is needed here.",
+    "picture": "",
+    "createdAt": "2026-04-28T12:05:00",
+    "voteCount": 4,
+    "accepted": false,
+    "author": {
+      "id": 3,
+      "username": "marius"
+    }
+  },
+  {
+    "id": 3,
+    "questionId": 1,
+    "body": "I had the same problem. Separating the props type made the code easier to understand.",
+    "picture": "",
+    "createdAt": "2026-04-28T13:30:00",
+    "voteCount": 2,
+    "accepted": false,
+    "author": {
+      "id": 4,
+      "username": "ioana"
+    }
+  },
+  {
+    "id": 4,
+    "questionId": 2,
+    "body": "For debounce I usually use setTimeout inside useEffect and clear it when the value changes.",
+    "picture": "",
+    "createdAt": "2026-04-29T09:15:00",
+    "voteCount": 5,
+    "accepted": true,
+    "author": {
+      "id": 2,
+      "username": "ana"
+    }
+  },
+  {
+    "id": 5,
+    "questionId": 2,
+    "body": "You can also use a small custom hook for this, but for a simple search input useEffect is enough.",
+    "picture": "",
+    "createdAt": "2026-04-29T10:10:00",
+    "voteCount": 1,
+    "accepted": false,
+    "author": {
+      "id": 5,
+      "username": "alex"
+    }
+  },
+  {
+    "id": 6,
+    "questionId": 3,
+    "body": "I would keep the auth token in memory, depending on how strict the app needs to be.",
+    "picture": "",
+    "createdAt": "2026-04-30T14:25:00",
+    "voteCount": 3,
+    "accepted": false,
+    "author": {
+      "id": 6,
+      "username": "diana"
+    }
+  },
+  {
+    "id": 7,
+    "questionId": 3,
+    "body": "For a school project, in-memory auth is probably fine, but in a real app you should be more careful.",
+    "picture": "",
+    "createdAt": "2026-04-30T15:00:00",
+    "voteCount": -1,
+    "accepted": false,
+    "author": {
+      "id": 3,
+      "username": "marius"
+    }
+  }
+]

@@ -1,0 +1,372 @@
+.question-card,
+.answer-card,
+.question-detail-card,
+.info-card,
+.welcome-card,
+.edit-question-card,
+.tag-manager-card,
+.home-card,
+.login-card {
+    border-radius: 3px;
+    box-shadow: none;
+}
+
+.question-card {
+    border-width: 0 0 1px;
+    padding: 16px 0;
+    background: var(--clear);
+}
+
+.question-card h2 {
+    font-size: 17px;
+    font-weight: 400;
+}
+
+.question-card h2 a {
+    color: var(--link);
+}
+
+.question-card h2 a:hover {
+    color: var(--link-hover);
+    text-decoration: none;
+}
+
+.question-stats {
+    width: 94px;
+    justify-content: flex-start;
+    padding-top: 2px;
+    font-size: 13px;
+    gap: 6px;
+}
+
+.question-stat strong {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.question-stat.has-answers strong {
+    color: var(--success-text);
+}
+
+.question-card p {
+    margin: 0;
+    line-height: 1.35;
+}
+
+.tag-pill {
+    border-radius: 3px;
+    background: var(--cream);
+    color: var(--tag-text);
+    padding: 4px 6px;
+    font-weight: 400;
+}
+
+.author-badge,
+.answer-author-card {
+    border-radius: 3px;
+    background: var(--soft-panel-background);
+}
+
+.welcome-card {
+    background: var(--primary-softer);
+}
+
+.info-card,
+.welcome-card,
+.edit-question-card,
+.tag-manager-card,
+.question-detail-card,
+.answer-card,
+.login-card {
+    background: var(--card);
+}
+
+.info-card h3 {
+    letter-spacing: 0;
+}
+
+.stats-grid div {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--soft-panel-background);
+}
+
+.vote-button {
+    border: 0;
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 20px;
+    line-height: 1;
+}
+
+.vote-button:hover {
+    background: var(--soft-panel-background);
+    color: var(--primary);
+}
+
+.like-button:hover {
+    background: var(--primary-softer);
+}
+
+.unlike-button:hover {
+    background: var(--cream);
+}
+
+.vote-count {
+    font-weight: 400;
+}
+
+.back-link,
+.card-edit-link {
+    color: var(--link);
+    font-weight: 400;
+}
+
+.back-link:hover,
+.card-edit-link:hover {
+    color: var(--link-hover);
+}
+
+.home-hero {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--card);
+    padding: 24px;
+}
+
+.home-hero h1 {
+    font-size: 34px;
+}
+
+.home-card strong {
+    color: var(--primary);
+    font-weight: 400;
+}
+
+.topbar-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-login,
+.topbar-account {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+.topbar-login {
+    background: var(--cream);
+    color: var(--link);
+}
+
+.topbar-account {
+    background: var(--cream);
+    border-color: var(--border);
+    color: var(--link);
+}
+
+.tag-picker {
+    margin-top: 10px;
+}
+
+.tag-picker-hint {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.selected-tags {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-picker-list {
+    max-height: 178px;
+    overflow: auto;
+    margin-top: 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--card);
+    padding: 4px;
+    display: grid;
+    gap: 2px;
+}
+
+.tag-choice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--clear);
+    color: var(--tag-text);
+    padding: 7px 8px;
+    font-size: 12px;
+    text-align: left;
+}
+
+.tag-choice:hover {
+    background: var(--cream);
+}
+
+.tag-choice.selected {
+    background: var(--link);
+    color: var(--button-text);
+}
+
+.tag-choice strong {
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.selected-tag {
+    border-color: var(--link);
+    background: var(--link);
+    color: var(--button-text);
+}
+
+.tag-picker-empty {
+    color: var(--muted);
+    padding: 8px;
+    font-size: 12px;
+}
+
+.tag-create-button {
+    margin-top: 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--soft-panel-background);
+    color: var(--link);
+    padding: 6px 8px;
+    font-size: 12px;
+}
+
+.tag-create-button:hover {
+    color: var(--link-hover);
+}
+
+.selected-tag {
+    border: 0;
+    cursor: pointer;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 22px;
+}
+
+.profile-header h1 {
+    font-size: 30px;
+}
+
+.profile-header p {
+    margin: 6px 0 0;
+    color: var(--muted);
+}
+
+.profile-logout {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.profile-avatar {
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    background: var(--primary);
+    color: var(--button-text);
+    font-size: 30px;
+}
+
+.profile-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.profile-stat,
+.profile-panel {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--card);
+    padding: 16px;
+}
+
+.profile-stat strong,
+.profile-stat span {
+    display: block;
+}
+
+.profile-stat strong {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.profile-stat span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.profile-panel {
+    margin-top: 18px;
+}
+
+.profile-panel h2 {
+    font-size: 21px;
+}
+
+.profile-question-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-question-link {
+    color: var(--link);
+}
+
+.profile-question-link:hover {
+    color: var(--link-hover);
+}
+
+@media (max-width: 850px) {
+    .app-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .left-nav {
+        display: none;
+    }
+
+    .page-grid,
+    .details-page,
+    .home-page {
+        padding: 18px;
+    }
+
+    .topbar-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+

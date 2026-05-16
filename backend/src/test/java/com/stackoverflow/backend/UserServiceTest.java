@@ -1,16 +1,14 @@
 package com.stackoverflow.backend;
 
 import com.stackoverflow.backend.entity.User;
-import com.stackoverflow.backend.entity.UserRole;
 import com.stackoverflow.backend.repository.UserRepository;
-import com.stackoverflow.backend.service.UserService;
+import com.stackoverflow.backend.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
