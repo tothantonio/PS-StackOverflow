@@ -1,27 +1,58 @@
-import { clearCurrentUser, findTestUser, setCurrentUser } from "./userService.ts";
+import { clearCurrentUser, setCurrentUser } from "./userService.ts";
+
+const API_URL = "http://localhost:8080/api/auth";
 
 let authToken = "";
 
 export async function login(data: { username: string; password: string }) {
-    const user = findTestUser(data.username, data.password);
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
 
-    if (!user) {
-        throw new Error("Invalid username or password.");
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || "Login failed");
+        }
+
+        const result = await response.json();
+        authToken = result.token;
+        setCurrentUser(result.user);
+
+        return result;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error("Login failed");
     }
+}
 
-    const result = {
-        token: `fake-token-${user.id}`,
-        user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-        },
-    };
+export async function register(data: { username: string; email: string; password: string }) {
+    try {
+        const response = await fetch(`${API_URL}/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
 
-    authToken = result.token;
-    setCurrentUser(result.user);
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || "Registration failed");
+        }
 
-    return result;
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error("Registration failed");
+    }
+}
+
+export function getAuthToken(): string {
+    return authToken;
 }
 
 export function logout() {

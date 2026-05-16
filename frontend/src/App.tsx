@@ -11,6 +11,7 @@ import QuestionDetailsPage from "./features/qa/pages/QuestionDetailsPage.tsx";
 import QuestionsPage from "./features/qa/pages/QuestionsPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
+import RegisterPage from "./pages/RegisterPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
                     <Route path="/profile" element={protectedPage(<ProfilePage />)} />
                     <Route path="/ask" element={protectedPage(<AskQuestionsPage />)} />
                     <Route path="/questions" element={<QuestionsPage />} />

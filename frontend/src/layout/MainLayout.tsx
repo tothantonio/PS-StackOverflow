@@ -70,9 +70,14 @@ function MainLayout({ children }: MainLayoutProps) {
                                 Logout
                             </button>
                         ) : (
-                            <Link to="/login" className="topbar-login">
-                                Login
-                            </Link>
+                            <>
+                                <Link to="/register" className="topbar-login">
+                                    Register
+                                </Link>
+                                <Link to="/login" className="topbar-login">
+                                    Login
+                                </Link>
+                            </>
                         )}
                         {loggedIn && (
                             <Link to="/profile" className="topbar-account">

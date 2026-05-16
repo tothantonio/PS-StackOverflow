@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type SubmitEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {login} from "../services/authService.ts";
 
@@ -8,7 +8,7 @@ function LoginPage(){
     const[password,setPassword] = useState("");
     const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault(); //previne refreshul automat al browserului
 
         try {
@@ -26,7 +26,6 @@ function LoginPage(){
             <form className="login-card" onSubmit={handleSubmit}>
                 <h1>Login</h1>
                 <p>Sign in to ask, answer, vote, and manage your profile.</p>
-                <p className="login-hint">Test users: alex / alex123, maria / maria123</p>
 
                 <input
                     className="question-form-input"
@@ -45,6 +44,20 @@ function LoginPage(){
 
                 <button className="ask-button" type="submit">Login</button>
                 {message && <span className="empty-state">{message}</span>}
+
+                <p style={{ marginTop: "20px", textAlign: "center" }}>
+                    Don't have an account?{" "}
+                    <a
+                        href="/register"
+                        style={{
+                            color: "#0066cc",
+                            textDecoration: "none",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Register here
+                    </a>
+                </p>
             </form>
         </main>
     );
