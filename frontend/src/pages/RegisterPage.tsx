@@ -30,7 +30,7 @@ function RegisterPage() {
         }
 
         try {
-            const data = await register({ username, email, password });
+            await register({ username, email, password });
             setMessage(`Registration successful! You can now login.`);
             
             // Clear form
