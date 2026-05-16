@@ -27,3 +27,17 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# dependencies
+node_modules/
+
+# IDE
+.idea/
+*.iml
+
+# build
+dist/
+target/
+
+# env
+.env
