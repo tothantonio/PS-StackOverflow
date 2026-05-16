@@ -57,7 +57,7 @@ class AnswerServiceTest {
         when(answerRepo.findByQuestion(q))
                 .thenReturn(List.of(buildAnswer(1, 1)));
 
-        List<Answer> result = (List<Answer>) answerService.getByQuestion(1);
+        List<Answer> result = answerService.getByQuestion(1);
 
         assertEquals(1, result.size());
     }

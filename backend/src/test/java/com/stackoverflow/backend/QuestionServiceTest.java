@@ -47,7 +47,7 @@ class QuestionServiceTest {
         when(questionRepo.findAllByOrderByCreatedAtDesc())
                 .thenReturn(List.of(buildQuestion(1, 1)));
 
-        List<Question> result = (List<Question>) questionService.getAll();
+        List<Question> result = questionService.getAll();
 
         assertEquals(1, result.size());
     }
