@@ -94,11 +94,14 @@ export const apiClient = {
                     question: { id: data.questionId },
                 }),
             });
-            if (!response.ok) throw new Error("Failed to create answer");
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to create answer");
+            }
             return response.json();
         },
-        update: async (id: number, data: { body: string; imageUrl?: string }, authorId: number) => {
-            const response = await fetch(`${API_BASE_URL}/answers/${id}?authorId=${authorId}`, {
+        update: async (id: number, data: { body: string; imageUrl?: string }, authorId: number, questionId: number) => {
+            const response = await fetch(`${API_BASE_URL}/answers/${id}?authorId=${authorId}&questionId=${questionId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -106,14 +109,56 @@ export const apiClient = {
                     imageUrl: data.imageUrl || null,
                 }),
             });
-            if (!response.ok) throw new Error("Failed to update answer");
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to update answer");
+            }
+            return response.json();
+        },
+        accept: async (id: number, authorId: number, questionId: number) => {
+            const response = await fetch(
+                `${API_BASE_URL}/answers/${id}/accept?authorId=${authorId}&questionId=${questionId}`,
+                { method: "POST" }
+            );
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to accept answer");
+            }
             return response.json();
         },
         delete: async (id: number, authorId: number) => {
             const response = await fetch(`${API_BASE_URL}/answers/${id}?authorId=${authorId}`, {
                 method: "DELETE",
             });
-            if (!response.ok) throw new Error("Failed to delete answer");
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to delete answer");
+            }
+        },
+    },
+
+    votes: {
+        voteQuestion: async (questionId: number, userId: number, direction: 1 | -1) => {
+            const response = await fetch(
+                `${API_BASE_URL}/votes/questions/${questionId}?userId=${userId}&direction=${direction}`,
+                { method: "POST" }
+            );
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to vote on question");
+            }
+            return response.json() as Promise<{ voteCount: number }>;
+        },
+        voteAnswer: async (answerId: number, userId: number, direction: 1 | -1) => {
+            const response = await fetch(
+                `${API_BASE_URL}/votes/answers/${answerId}?userId=${userId}&direction=${direction}`,
+                { method: "POST" }
+            );
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to vote on answer");
+            }
+            return response.json() as Promise<{ voteCount: number }>;
         },
     },
 

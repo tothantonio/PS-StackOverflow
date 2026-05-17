@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import type { AnswerDto } from "../types/answerTypes.ts";
+import type { QuestionDto } from "../types/questionTypes.ts";
 
 import AnswersForm from "../components/AnswersForm.tsx";
 import AnswersList from "../components/AnswersList.tsx";
@@ -24,7 +25,6 @@ import { getCurrentUser } from "../../../services/userService.ts";
 import {
     deleteQuestion,
     getQuestionById,
-    setQuestionStatus,
     voteQuestion,
 } from "../../../services/questionService.ts";
 
@@ -34,12 +34,18 @@ function QuestionDetailsPage() {
 
     const questionId = Number(id);
 
-    const [currentQuestion, setCurrentQuestion] = useState<any>(undefined);
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionDto | undefined>(undefined);
     const [answers, setAnswers] = useState<AnswerDto[]>([]);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(true);
 
     const currentUser = getCurrentUser();
+
+    async function loadQuestion() {
+        const question = await getQuestionById(questionId);
+        setCurrentQuestion(question);
+        return question;
+    }
 
     useEffect(() => {
         async function loadData() {
@@ -47,12 +53,12 @@ function QuestionDetailsPage() {
 
             try {
                 setLoading(true);
-
-                const question = await getQuestionById(questionId);
+                const question = await loadQuestion();
                 const answersData = await getAnswersByQuestionId(questionId);
-
-                setCurrentQuestion(question);
                 setAnswers(answersData);
+                if (!question) {
+                    setCurrentQuestion(undefined);
+                }
             } catch (error) {
                 console.error("Failed to load question details:", error);
                 setCurrentQuestion(undefined);
@@ -65,12 +71,8 @@ function QuestionDetailsPage() {
     }, [id, questionId]);
 
     async function refreshAnswers() {
-        try {
-            const updatedAnswers = await getAnswersByQuestionId(questionId);
-            setAnswers(updatedAnswers);
-        } catch (error) {
-            console.error("Failed to refresh answers:", error);
-        }
+        const updatedAnswers = await getAnswersByQuestionId(questionId);
+        setAnswers(updatedAnswers);
     }
 
     if (loading) {
@@ -107,10 +109,7 @@ function QuestionDetailsPage() {
         .toLowerCase()
         .replace("_", " ");
 
-    const hasAcceptedAnswer = answers.some((a) => a.accepted);
-
-    const isQuestionClosed =
-        activeQuestion.status === "SOLVED" || hasAcceptedAnswer;
+    const isQuestionClosed = activeQuestion.status === "SOLVED";
 
     async function handleCreateAnswer(data: {
         questionId: number;
@@ -123,25 +122,18 @@ function QuestionDetailsPage() {
         }
 
         if (isQuestionClosed) {
-            setMessage("This question is solved. No more answers.");
+            setMessage("This question is solved. No more answers can be added.");
             return;
         }
 
         try {
             await createAnswer(data);
-
-            const updatedQuestion = await setQuestionStatus(
-                activeQuestion.id,
-                "IN_PROGRESS"
-            );
-
-            if (updatedQuestion) setCurrentQuestion(updatedQuestion);
-
+            await loadQuestion();
             await refreshAnswers();
             setMessage("");
         } catch (e) {
             console.error(e);
-            setMessage("Failed to create answer.");
+            setMessage(e instanceof Error ? e.message : "Failed to create answer.");
         }
     }
 
@@ -175,8 +167,42 @@ function QuestionDetailsPage() {
                         !isLoggedIn() ||
                         activeQuestion.author.id === currentUser?.id
                     }
-                    onUpvote={() => voteQuestion(activeQuestion.id, currentUser!.id, 1)}
-                    onDownvote={() => voteQuestion(activeQuestion.id, currentUser!.id, -1)}
+                    onUpvote={async () => {
+                        try {
+                            const voteCount = await voteQuestion(
+                                activeQuestion.id,
+                                currentUser!.id,
+                                1
+                            );
+                            if (voteCount != null) {
+                                setCurrentQuestion({ ...activeQuestion, voteCount });
+                            }
+                            setMessage("");
+                        } catch (error) {
+                            console.error(error);
+                            setMessage(
+                                error instanceof Error ? error.message : "Failed to vote."
+                            );
+                        }
+                    }}
+                    onDownvote={async () => {
+                        try {
+                            const voteCount = await voteQuestion(
+                                activeQuestion.id,
+                                currentUser!.id,
+                                -1
+                            );
+                            if (voteCount != null) {
+                                setCurrentQuestion({ ...activeQuestion, voteCount });
+                            }
+                            setMessage("");
+                        } catch (error) {
+                            console.error(error);
+                            setMessage(
+                                error instanceof Error ? error.message : "Failed to vote."
+                            );
+                        }
+                    }}
                 />
 
                 <div className="detail-content">
@@ -235,7 +261,8 @@ function QuestionDetailsPage() {
                 answers={answers}
                 canAccept={
                     isLoggedIn() &&
-                    activeQuestion.author.id === currentUser?.id
+                    activeQuestion.author.id === currentUser?.id &&
+                    !isQuestionClosed
                 }
                 canVoteAnswer={(a) =>
                     isLoggedIn() && a.author.id !== currentUser?.id
@@ -244,31 +271,83 @@ function QuestionDetailsPage() {
                     isLoggedIn() && a.author.id === currentUser?.id
                 }
                 isSolved={isQuestionClosed}
-                onVote={async (id, dir) => {
-                    await voteAnswer(id, currentUser!.id, dir);
-                    await refreshAnswers();
+                onVote={async (answerId, dir) => {
+                    try {
+                        const voteCount = await voteAnswer(answerId, currentUser!.id, dir);
+                        if (voteCount != null) {
+                            setAnswers((prev) =>
+                                prev
+                                    .map((answer) =>
+                                        answer.id === answerId
+                                            ? { ...answer, voteCount }
+                                            : answer
+                                    )
+                                    .sort((a, b) => b.voteCount - a.voteCount)
+                            );
+                        }
+                        setMessage("");
+                    } catch (error) {
+                        console.error(error);
+                        setMessage(
+                            error instanceof Error ? error.message : "Failed to vote."
+                        );
+                    }
                 }}
-                onDelete={async (id) => {
-                    await deleteAnswer(id);
-                    await refreshAnswers();
+                onDelete={async (answerId) => {
+                    if (!window.confirm("Delete this answer permanently?")) {
+                        return;
+                    }
+                    try {
+                        await deleteAnswer(answerId);
+                        await refreshAnswers();
+                        setMessage("");
+                    } catch (error) {
+                        console.error(error);
+                        setMessage("Failed to delete answer.");
+                    }
                 }}
-                onAccept={async (id) => {
-                    await acceptAnswer(id, activeQuestion.id);
-                    const q = await setQuestionStatus(activeQuestion.id, "SOLVED");
-                    if (q) setCurrentQuestion(q);
-                    await refreshAnswers();
+                onAccept={async (answerId) => {
+                    try {
+                        await acceptAnswer(answerId, activeQuestion.id);
+                        await loadQuestion();
+                        await refreshAnswers();
+                        setMessage("");
+                    } catch (error) {
+                        console.error(error);
+                        setMessage(
+                            error instanceof Error ? error.message : "Failed to accept answer."
+                        );
+                    }
                 }}
-                onEdit={async (id, body, picture) => {
-                    await updateAnswer(id, { body, picture });
-                    await refreshAnswers();
+                onEdit={async (answerId, body, picture) => {
+                    try {
+                        await updateAnswer(answerId, activeQuestion.id, { body, picture });
+                        await refreshAnswers();
+                        setMessage("");
+                    } catch (error) {
+                        console.error(error);
+                        setMessage("Failed to update answer.");
+                    }
                 }}
             />
 
-            {!isQuestionClosed && (
+            {isLoggedIn() && !isQuestionClosed ? (
                 <AnswersForm
                     questionId={activeQuestion.id}
                     onSubmit={handleCreateAnswer}
                 />
+            ) : !isLoggedIn() ? (
+                <section className="your-answer-section">
+                    <p className="answers-empty">
+                        <Link to="/login">Log in</Link> to post an answer.
+                    </p>
+                </section>
+            ) : (
+                <section className="your-answer-section">
+                    <p className="answers-empty">
+                        This question is solved. No more answers can be added.
+                    </p>
+                </section>
             )}
         </main>
     );

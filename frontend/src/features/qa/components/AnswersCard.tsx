@@ -38,6 +38,7 @@ function getInitials(username: string) {
 
 function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onDelete, onAccept, onEdit}: AnswersCardProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const [editError, setEditError] = useState("");
     const [body, setBody] = useState(answer.body);
     const displayPicture = answer.picture ?? "";
     const [picture, setPicture] = useState(displayPicture);
@@ -87,7 +88,13 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                                 </button>
                             </div>
                         )}
+                        {editError && <span className="answer-error">{editError}</span>}
                         <button className="ask-button" onClick={() => {
+                            if (!body.trim()) {
+                                setEditError("Answer text is required.");
+                                return;
+                            }
+                            setEditError("");
                             onEdit(answer.id, body, picture.trim() || undefined);
                             setIsEditing(false);
                         }}>

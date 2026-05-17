@@ -35,4 +35,7 @@ public class Answer {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private Boolean accepted = false;
+
 }

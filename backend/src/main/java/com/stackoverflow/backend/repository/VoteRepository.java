@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface VoteRepository extends CrudRepository<Vote, Integer> {
+public interface VoteRepository extends CrudRepository<Vote, Long> {
     Optional<Vote> findByUserAndQuestion(User user, Question question);
     Optional<Vote> findByUserAndAnswer(User user, Answer answer);
     long countByQuestionAndType(Question question, VoteType type);

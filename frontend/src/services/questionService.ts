@@ -124,36 +124,17 @@ export async function updateQuestion(
     return normalizeQuestion(updatedQuestion as ApiQuestion);
 }
 
-export async function setQuestionStatus(id: number, status: string): Promise<QuestionDto | undefined> {
-    try {
-        const question = await apiClient.questions.getById(id);
-        if (question) {
-            const normalized = normalizeQuestion(question as ApiQuestion);
-            return { ...normalized, status };
-        }
-        return undefined;
-    } catch (error) {
-        console.error("Failed to set question status:", error);
-        return undefined;
-    }
-}
-
 export async function voteQuestion(
     id: number,
     userId: number,
     direction: 1 | -1
-): Promise<QuestionDto | undefined> {
-    void userId;
-    void direction;
+): Promise<number | undefined> {
     try {
-        const question = await apiClient.questions.getById(id);
-        if (question) {
-            return normalizeQuestion(question as ApiQuestion);
-        }
-        return undefined;
+        const result = await apiClient.votes.voteQuestion(id, userId, direction);
+        return result.voteCount;
     } catch (error) {
         console.error("Failed to vote on question:", error);
-        return undefined;
+        throw error;
     }
 }
 
