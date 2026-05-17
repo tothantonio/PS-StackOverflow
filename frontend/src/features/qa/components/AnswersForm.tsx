@@ -1,10 +1,13 @@
 import { useState, type ChangeEvent } from "react";
-import { Image } from "lucide-react";
-import type {AnswerDto, CreateAnswerRequest} from "../types/answerTypes.ts";
+import type { AnswerDto, CreateAnswerRequest } from "../types/answerTypes.ts";
+import { fileToCompressedDataUrl } from "../../../services/imageUtils.ts";
+import PostPicture from "./PostPicture.tsx";
 
 type AnswersFormProps = {
     questionId: number;
-    onSubmit?: (data: CreateAnswerRequest) => AnswerDto | void;
+    onSubmit?: (
+        data: CreateAnswerRequest
+    ) => Promise<AnswerDto | void> | AnswerDto | void;
 };
 
 function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
@@ -12,20 +15,20 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
     const [picture, setPicture] = useState("");
     const [error, setError] = useState("");
 
-    function handlePictureFileChange(event: ChangeEvent<HTMLInputElement>) {
+    async function handlePictureFileChange(event: ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
 
         if (!file) {
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            if (typeof reader.result === "string") {
-                setPicture(reader.result);
-            }
-        };
-        reader.readAsDataURL(file);
+        try {
+            setError("");
+            setPicture(await fileToCompressedDataUrl(file));
+        } catch (err) {
+            setPicture("");
+            setError(err instanceof Error ? err.message : "Failed to process image.");
+        }
     }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -54,7 +57,7 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
                     value={body}
                     onChange={(event) => setBody(event.target.value)}
                     rows={8}
-                    placeholder="Write a focused answer. Code blocks can be wrapped in triple backticks."
+                    placeholder="Write a focused answer. Lawyers are like health assurence, you hope you don't need it."
                 />
                 <label className="picture-upload">
                     <span>Picture</span>
@@ -62,9 +65,7 @@ function AnswersForm({questionId, onSubmit}: AnswersFormProps) {
                 </label>
                 {picture && (
                     <div className="picture-upload-preview">
-                        <span className="picture-indicator icon-only" title="Picture selected">
-                            <Image size={14} />
-                        </span>
+                        <PostPicture src={picture} alt="Answer preview" />
                         <button className="tag-create-button" type="button" onClick={() => setPicture("")}>
                             Remove picture
                         </button>

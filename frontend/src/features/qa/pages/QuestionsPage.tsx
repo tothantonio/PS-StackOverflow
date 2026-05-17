@@ -1,28 +1,89 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { QuestionDto } from "../types/questionTypes.ts";
 import QuestionForm from "../components/QuestionForm.tsx";
 import QuestionCard from "../components/QuestionCard.tsx";
-import { createQuestion, getQuestions, searchQuestions } from "../../../services/questionService.ts";
-import { getTagNames } from "../../../services/tagService.ts";
+import { QuestionsFilter } from "../components/QuestionsFilter.tsx";
+import {
+    createQuestion,
+    filterQuestions,
+    getQuestions,
+} from "../../../services/questionService.ts";
 import { getAnswersByQuestionId } from "../../../services/answerService.ts";
 import { isLoggedIn } from "../../../services/authService.ts";
 import { getCurrentUser } from "../../../services/userService.ts";
 import { parseTags } from "../../../services/tagUtils.ts";
 
 function QuestionsPage() {
-    const [questions, setQuestions] = useState<QuestionDto[]>(() => getQuestions());
-    const [search, setSearch] = useState("");
+    const [questions, setQuestions] = useState<QuestionDto[]>([]);
+    const [filteredQuestions, setFilteredQuestions] = useState<QuestionDto[]>([]);
+    const [answerCounts, setAnswerCounts] = useState<Record<number, number>>({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
     const [newTitle, setNewTitle] = useState("");
     const [newBody, setNewBody] = useState("");
     const [newTags, setNewTags] = useState("");
     const [newPicture, setNewPicture] = useState("");
-    const [tagFilter, setTagFilter] = useState("");
-    const [userFilter, setUserFilter] = useState("");
-    const [mineOnly, setMineOnly] = useState(false);
     const [formError, setFormError] = useState("");
 
-    function handleAddQuestion() {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [filterByUserId, setFilterByUserId] = useState<number | undefined>(undefined);
+    const [showMyQuestions, setShowMyQuestions] = useState(false);
+
+    const loggedIn = isLoggedIn();
+    const currentUser = loggedIn ? getCurrentUser() : undefined;
+
+    const loadQuestions = useCallback(async () => {
+        try {
+            setLoading(true);
+            const data = await getQuestions();
+            setQuestions(data || []);
+            setError("");
+        } catch (err) {
+            console.error("Failed to load questions:", err);
+            setError("Failed to load questions");
+            setQuestions([]);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadQuestions();
+    }, [loadQuestions]);
+
+    useEffect(() => {
+        const result = filterQuestions(questions, {
+            searchQuery,
+            tagNames: selectedTags,
+            authorId: filterByUserId,
+            mineOnly: showMyQuestions,
+            currentUserId: currentUser?.id,
+        });
+        setFilteredQuestions(result);
+    }, [questions, searchQuery, selectedTags, filterByUserId, showMyQuestions, currentUser?.id]);
+
+    useEffect(() => {
+        async function loadAnswerCounts() {
+            const entries = await Promise.all(
+                filteredQuestions.map(async (question) => {
+                    const answers = await getAnswersByQuestionId(question.id);
+                    return [question.id, answers.length] as const;
+                })
+            );
+            setAnswerCounts(Object.fromEntries(entries));
+        }
+
+        if (filteredQuestions.length > 0) {
+            loadAnswerCounts();
+        } else {
+            setAnswerCounts({});
+        }
+    }, [filteredQuestions]);
+
+    async function handleAddQuestion() {
         if (!isLoggedIn()) {
             setFormError("You must be logged in to ask a question.");
             return;
@@ -33,35 +94,39 @@ function QuestionsPage() {
             return;
         }
 
-        if (parseTags(newTags).length === 0) {
-            setFormError("Choose at least one existing tag.");
+        const tags = parseTags(newTags);
+        if (tags.length === 0) {
+            setFormError("Choose at least one tag.");
             return;
         }
 
-        createQuestion({
-            title: newTitle.trim(),
-            body: newBody.trim(),
-            tags: parseTags(newTags).filter((tag) => getTagNames().includes(tag)),
-            picture: newPicture.trim() || undefined,
-        });
+        try {
+            setFormError("");
+            await createQuestion({
+                title: newTitle.trim(),
+                body: newBody.trim(),
+                tags,
+                picture: newPicture.trim() || undefined,
+            });
 
-        setQuestions(getQuestions());
-        setNewTitle("");
-        setNewBody("");
-        setNewTags("");
-        setNewPicture("");
-        setFormError("");
+            setNewTitle("");
+            setNewBody("");
+            setNewTags("");
+            setNewPicture("");
+
+            await loadQuestions();
+        } catch (err) {
+            console.error("Failed to create question:", err);
+            setFormError("Failed to create question. Please try again.");
+        }
     }
 
-    const loggedIn = isLoggedIn();
-    const currentUser = loggedIn ? getCurrentUser() : undefined;
-    const matchingFilterTags = getTagNames().filter((tag) =>
-        tag.toLowerCase().startsWith(tagFilter.trim().toLowerCase())
-    );
-    const filteredQuestions = (search.trim() ? searchQuestions(search) : questions)
-        .filter((question) => !tagFilter.trim() || question.tags.some((tag) => tag.toLowerCase().startsWith(tagFilter.trim().toLowerCase())))
-        .filter((question) => !userFilter.trim() || question.author.username.toLowerCase().includes(userFilter.trim().toLowerCase()))
-        .filter((question) => !mineOnly || (currentUser && question.author.id === currentUser.id));
+    function handleClearFilters() {
+        setSearchQuery("");
+        setSelectedTags([]);
+        setFilterByUserId(undefined);
+        setShowMyQuestions(false);
+    }
 
     return (
         <main className="page-grid">
@@ -73,71 +138,45 @@ function QuestionsPage() {
                     </div>
                 </div>
 
-                <input
-                    className="search-input"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search by title..."
+                {error && <div className="form-error">{error}</div>}
+
+                <QuestionsFilter
+                    onSearch={setSearchQuery}
+                    onFilterByTag={setSelectedTags}
+                    onFilterByUser={setFilterByUserId}
+                    onShowMyQuestions={setShowMyQuestions}
+                    onClearFilters={handleClearFilters}
                 />
 
-                <div className="filter-row">
-                    <div className="tag-filter-box">
-                        <input
-                            className="question-form-input"
-                            value={tagFilter}
-                            onChange={(e) => setTagFilter(e.target.value)}
-                            placeholder="Filter by tag..."
-                        />
-                        {tagFilter.trim() && matchingFilterTags.length > 0 && (
-                            <div className="tag-filter-suggestions">
-                                {matchingFilterTags.map((tag) => (
-                                    <button key={tag} type="button" onClick={() => setTagFilter(tag)}>
-                                        #{tag}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <input
-                        className="question-form-input"
-                        value={userFilter}
-                        onChange={(e) => setUserFilter(e.target.value)}
-                        placeholder="Filter by user..."
-                    />
-                    {loggedIn && (
-                        <label className="filter-check">
-                            <input type="checkbox" checked={mineOnly} onChange={(e) => setMineOnly(e.target.checked)} />
-                            My questions
-                        </label>
-                    )}
-                </div>
-
-                <div className="questions-feed">
-                    {filteredQuestions.length === 0 ? (
-                        <p className="empty-state">No questions found.</p>
-                    ) : (
-                        filteredQuestions.map((q) => {
-                            const answers = getAnswersByQuestionId(q.id);
-
-                            return (
+                {loading ? (
+                    <div className="loading-state">Loading questions...</div>
+                ) : (
+                    <div className="questions-feed">
+                        {filteredQuestions.length === 0 ? (
+                            <p className="empty-state">No questions found.</p>
+                        ) : (
+                            filteredQuestions.map((q) => (
                                 <QuestionCard
                                     key={q.id}
                                     id={q.id}
                                     title={q.title}
                                     body={q.body}
                                     author={q.author}
-                                    tags={q.tags}
+                                    tags={q.tags ?? []}
                                     createdAt={q.createdAt}
                                     status={q.status}
-                                    answerCount={answers.length}
-                                    hasAcceptedAnswer={answers.some((answer) => answer.accepted)}
+                                    answerCount={answerCounts[q.id] ?? 0}
                                     voteCount={q.voteCount}
                                     picture={q.picture}
+                                    canEdit={
+                                        Boolean(currentUser) &&
+                                        currentUser!.id === q.author.id
+                                    }
                                 />
-                            );
-                        })
-                    )}
-                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </section>
 
             <aside className="side-panel">
@@ -145,7 +184,7 @@ function QuestionsPage() {
                     <h2>Ask a question</h2>
                     {loggedIn ? (
                         <>
-                            <p>Add a question and choose the tags that describe it.</p>
+                            <p>Add a question and choose tags that describe it.</p>
                             <QuestionForm
                                 title={newTitle}
                                 body={newBody}
@@ -162,7 +201,9 @@ function QuestionsPage() {
                     ) : (
                         <>
                             <p>Login to ask a question, add tags, vote, or answer.</p>
-                            <Link className="ask-button" to="/login">Login to ask</Link>
+                            <Link className="ask-button" to="/login">
+                                Login to ask
+                            </Link>
                         </>
                     )}
                 </div>
@@ -185,4 +226,3 @@ function QuestionsPage() {
 }
 
 export default QuestionsPage;
-

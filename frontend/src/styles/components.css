@@ -582,6 +582,31 @@
     background: var(--soft-panel-background);
 }
 
+.post-picture {
+    margin: 16px 0;
+    max-width: min(100%, 640px);
+}
+
+.post-picture img {
+    display: block;
+    width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--soft-panel-background);
+    cursor: zoom-in;
+}
+
+.picture-upload-preview .post-picture {
+    margin: 8px 0 0;
+    max-width: min(100%, 420px);
+}
+
+.picture-upload-preview .post-picture img {
+    max-height: 280px;
+}
+
 .detail-actions button {
     border: 0;
     background: var(--clear);
@@ -917,6 +942,274 @@
     font-size: 13px;
 }
 
+/* Questions Filter Component */
+.questions-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--input-background);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-container input:focus {
+    border-color: var(--primary);
+}
+
+.search-container .search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--muted);
+}
+
+.clear-search {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-search:hover {
+    color: var(--foreground);
+}
+
+.filter-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.filter-toggle-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    background: var(--primary);
+    color: white;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.filter-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    background: var(--body-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.checkbox-label span {
+    font-size: 14px;
+    color: var(--foreground);
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-filter-btn {
+    padding: 6px 12px;
+    background: var(--body-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    color: var(--foreground);
+}
+
+.tag-filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.tag-filter-btn.selected {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.selected-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.selected-tags-label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.tags-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.remove-tag {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.remove-tag:hover {
+    opacity: 0.7;
+}
+
+.user-filter-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.user-filter-btn {
+    padding: 6px 12px;
+    background: var(--body-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--foreground);
+}
+
+.user-filter-btn:hover,
+.user-filter-btn.selected {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.clear-user-filter-btn {
+    margin-top: 8px;
+    align-self: flex-start;
+    border: 0;
+    background: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+}
+
+.edit-question-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.clear-filters-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.clear-filters-btn:hover {
+    border-color: var(--foreground);
+    color: var(--foreground);
+    background: var(--body-bg);
+}
+
 @media (max-width: 850px) {
     .page-grid {
         grid-template-columns: 1fr;
@@ -951,6 +1244,15 @@
 
     .filter-row {
         grid-template-columns: 1fr;
+    }
+
+    .questions-filter {
+        flex-direction: column;
+    }
+
+    .filter-toggle-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 

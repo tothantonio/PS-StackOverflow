@@ -14,7 +14,7 @@ public class AnswerController{
     @Autowired
     private AnswerService answerService;
 
-    @GetMapping("/question")
+    @GetMapping
     public List<Answer> getByQuestion(@RequestParam Integer questionId) {
         return answerService.getByQuestion(questionId);
     }

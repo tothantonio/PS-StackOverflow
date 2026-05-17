@@ -1,134 +1,197 @@
 import type { CreateQuestionRequest, QuestionDto } from "../features/qa/types/questionTypes.ts";
-import questionsData from "../features/qa/data/questions.json";
 import { getCurrentUser } from "./userService.ts";
+import { apiClient } from "./apiClient.ts";
+import {
+    normalizeQuestion,
+    normalizeQuestions,
+    type ApiQuestion,
+} from "../features/qa/mappers/questionMapper.ts";
 
-function saveQuestions(nextQuestions: QuestionDto[]) {
-    questions = nextQuestions;
+export async function getQuestions(): Promise<QuestionDto[]> {
+    try {
+        const questions = await apiClient.questions.getAll();
+        return normalizeQuestions(questions as ApiQuestion[]);
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
 }
 
-let questions: QuestionDto[] = questionsData as QuestionDto[];
-const questionVotesByUser: Record<string, number> = {};
-
-export function getQuestions(): QuestionDto[] {
-    return [...questions].sort(
-        (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+export async function getQuestionById(id: number): Promise<QuestionDto | undefined> {
+    try {
+        const question = await apiClient.questions.getById(id);
+        return normalizeQuestion(question as ApiQuestion);
+    } catch (error) {
+        console.error("Failed to fetch question:", error);
+        return undefined;
+    }
 }
 
-export function getQuestionById(id: number): QuestionDto | undefined {
-    return questions.find((question) => question.id === id);
+export async function searchQuestions(search: string): Promise<QuestionDto[]> {
+    try {
+        if (!search.trim()) {
+            return getQuestions();
+        }
+        const results = await apiClient.questions.search(search);
+        return normalizeQuestions(results as ApiQuestion[]);
+    } catch (error) {
+        console.error("Failed to search questions:", error);
+        return [];
+    }
 }
 
-export function searchQuestions(search: string): QuestionDto[] {
-    const text = search.trim().toLowerCase();
+export async function getMyQuestions(userId: number): Promise<QuestionDto[]> {
+    try {
+        const results = await apiClient.questions.getByAuthor(userId);
+        return normalizeQuestions(results as ApiQuestion[]);
+    } catch (error) {
+        console.error("Failed to fetch my questions:", error);
+        return [];
+    }
+}
 
-    if (!text) {
-        return getQuestions();
+export async function getQuestionsByTag(tagName: string): Promise<QuestionDto[]> {
+    try {
+        const results = await apiClient.questions.filterByTag(tagName);
+        return normalizeQuestions(results as ApiQuestion[]);
+    } catch (error) {
+        console.error("Failed to filter by tag:", error);
+        return [];
+    }
+}
+
+export async function getQuestionsByTags(tagNames: string[]): Promise<QuestionDto[]> {
+    try {
+        if (!tagNames.length) {
+            return getQuestions();
+        }
+        const results = await apiClient.questions.filterByTags(tagNames);
+        return normalizeQuestions(results as ApiQuestion[]);
+    } catch (error) {
+        console.error("Failed to filter by tags:", error);
+        return [];
+    }
+}
+
+export async function createQuestion(data: CreateQuestionRequest): Promise<QuestionDto> {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+        throw new Error("User not logged in");
     }
 
-    return getQuestions().filter((question) =>
-        question.title.toLowerCase().includes(text)
+    const newQuestion = await apiClient.questions.create(
+        {
+            title: data.title,
+            body: data.body,
+            imageUrl: data.picture ?? undefined,
+            tags: data.tags,
+        },
+        currentUser.id
     );
+
+    return normalizeQuestion(newQuestion as ApiQuestion);
 }
 
-export function getMyQuestions(userId: number): QuestionDto[] {
-    return getQuestions().filter((question) => question.author.id === userId);
-}
-
-export function createQuestion(data: CreateQuestionRequest): QuestionDto {
+export async function deleteQuestion(id: number): Promise<void> {
     const currentUser = getCurrentUser();
-    const newQuestion: QuestionDto = {
-        id: Date.now(),
-        title: data.title,
-        body: data.body,
-        tags: data.tags ?? [],
-        createdAt: new Date().toISOString(),
-        status: "RECEIVED",
-        voteCount: 0,
-        picture: data.picture,
-        author: currentUser,
-    };
+    if (!currentUser) {
+        throw new Error("User not logged in");
+    }
 
-    saveQuestions([newQuestion, ...questions]);
-
-    return newQuestion;
+    await apiClient.questions.delete(id, currentUser.id);
 }
 
-export function deleteQuestion(id: number): void {
-    saveQuestions(questions.filter((question) => question.id !== id));
-}
-
-export function updateQuestion(
+export async function updateQuestion(
     id: number,
     data: CreateQuestionRequest
-): QuestionDto | undefined {
-    let updatedQuestion: QuestionDto | undefined;
+): Promise<QuestionDto | undefined> {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+        throw new Error("User not logged in");
+    }
 
-    const nextQuestions = questions.map((question) => {
-        if (question.id === id) {
-            const nextQuestion: QuestionDto = {
-                ...question,
-                title: data.title,
-                body: data.body,
-                tags: data.tags ?? question.tags,
-                picture: data.picture ?? question.picture,
-            };
-            updatedQuestion = nextQuestion;
-            return nextQuestion;
-        }
+    const updatedQuestion = await apiClient.questions.update(
+        id,
+        {
+            title: data.title,
+            body: data.body,
+            imageUrl: data.picture ?? undefined,
+            tags: data.tags,
+        },
+        currentUser.id
+    );
 
-        return question;
-    });
-
-    saveQuestions(nextQuestions);
-
-    return updatedQuestion;
+    return normalizeQuestion(updatedQuestion as ApiQuestion);
 }
 
-export function setQuestionStatus(id: number, status: string): QuestionDto | undefined {
-    let updatedQuestion: QuestionDto | undefined;
-
-    const nextQuestions = questions.map((question) => {
-        if (question.id === id) {
-            updatedQuestion = {
-                ...question,
-                status,
-            };
-            return updatedQuestion;
+export async function setQuestionStatus(id: number, status: string): Promise<QuestionDto | undefined> {
+    try {
+        const question = await apiClient.questions.getById(id);
+        if (question) {
+            const normalized = normalizeQuestion(question as ApiQuestion);
+            return { ...normalized, status };
         }
-
-        return question;
-    });
-
-    saveQuestions(nextQuestions);
-
-    return updatedQuestion;
+        return undefined;
+    } catch (error) {
+        console.error("Failed to set question status:", error);
+        return undefined;
+    }
 }
 
-export function voteQuestion(id: number, userId: number, direction: 1 | -1): QuestionDto | undefined {
-    let updatedQuestion: QuestionDto | undefined;
-    const voteKey = `stackoverflow.questionVote.${id}.${userId}`;
-
-    const nextQuestions = questions.map((question) => {
-        if (question.id !== id || question.author.id === userId) {
-            return question;
+export async function voteQuestion(
+    id: number,
+    userId: number,
+    direction: 1 | -1
+): Promise<QuestionDto | undefined> {
+    void userId;
+    void direction;
+    try {
+        const question = await apiClient.questions.getById(id);
+        if (question) {
+            return normalizeQuestion(question as ApiQuestion);
         }
-
-        const previousVote = questionVotesByUser[voteKey] ?? 0;
-        const voteDelta = direction - previousVote;
-        questionVotesByUser[voteKey] = direction;
-
-        updatedQuestion = {
-            ...question,
-            voteCount: question.voteCount + voteDelta,
-        };
-
-        return updatedQuestion;
-    });
-
-    saveQuestions(nextQuestions);
-
-    return updatedQuestion;
+        return undefined;
+    } catch (error) {
+        console.error("Failed to vote on question:", error);
+        return undefined;
+    }
 }
 
+/** Client-side filter combining search, tags, author, and "my questions". */
+export function filterQuestions(
+    questions: QuestionDto[],
+    options: {
+        searchQuery?: string;
+        tagNames?: string[];
+        authorId?: number;
+        mineOnly?: boolean;
+        currentUserId?: number;
+    }
+): QuestionDto[] {
+    let result = [...questions];
+
+    const search = options.searchQuery?.trim().toLowerCase();
+    if (search) {
+        result = result.filter((question) =>
+            question.title.toLowerCase().includes(search)
+        );
+    }
+
+    if (options.tagNames && options.tagNames.length > 0) {
+        result = result.filter((question) =>
+            options.tagNames!.some((tag) => question.tags.includes(tag))
+        );
+    }
+
+    if (options.authorId != null) {
+        result = result.filter((question) => question.author.id === options.authorId);
+    }
+
+    if (options.mineOnly && options.currentUserId != null) {
+        result = result.filter((question) => question.author.id === options.currentUserId);
+    }
+
+    return result.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+}

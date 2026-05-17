@@ -10,7 +10,5 @@ import java.util.List;
 
 @Repository
 public interface QuestionTagRepository extends CrudRepository<QuestionTag, Integer> {
-//    List<QuestionTag> findByQuestion(Question question);
-//    List<QuestionTag> findByTag(Tag tag);
-//    void deleteByQuestion(Question question);
+    List<QuestionTag> findByTag(Tag tag);
 }

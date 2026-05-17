@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QuestionForm from "../components/QuestionForm.tsx";
 import { createQuestion } from "../../../services/questionService.ts";
-import { getTagNames } from "../../../services/tagService.ts";
 import { isLoggedIn } from "../../../services/authService.ts";
 import { parseTags } from "../../../services/tagUtils.ts";
 
@@ -14,7 +13,7 @@ function AskQuestionsPage() {
     const [picture, setPicture] = useState("");
     const [error, setError] = useState("");
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (!isLoggedIn()) {
             setError("You must be logged in to ask a question.");
             return;
@@ -25,19 +24,25 @@ function AskQuestionsPage() {
             return;
         }
 
-        if (parseTags(tags).length === 0) {
-            setError("Choose at least one existing tag.");
+        const parsedTags = parseTags(tags);
+        if (parsedTags.length === 0) {
+            setError("Choose at least one tag.");
             return;
         }
 
-        const question = createQuestion({
-            title: title.trim(),
-            body: body.trim(),
-            tags: parseTags(tags).filter((tag) => getTagNames().includes(tag)),
-            picture: picture.trim() || undefined,
-        });
+        try {
+            const question = await createQuestion({
+                title: title.trim(),
+                body: body.trim(),
+                tags: parsedTags,
+                picture: picture.trim() || undefined,
+            });
 
-        navigate(`/questions/${question.id}`);
+            navigate(`/questions/${question.id}`);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to create question. Check backend logs.");
+        }
     }
 
     return (
@@ -69,4 +74,3 @@ function AskQuestionsPage() {
 }
 
 export default AskQuestionsPage;
-

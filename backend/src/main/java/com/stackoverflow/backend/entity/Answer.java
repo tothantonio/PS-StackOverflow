@@ -29,6 +29,7 @@ public class Answer {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String body;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String imageUrl;
 
     @CreationTimestamp

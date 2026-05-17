@@ -1,11 +1,37 @@
-import { getMyQuestions } from "../../../services/questionService.ts";
+import { useEffect, useState } from "react";
 import QuestionCard from "../components/QuestionCard.tsx";
+
+import { getMyQuestions } from "../../../services/questionService.ts";
 import { getAnswersByQuestionId } from "../../../services/answerService.ts";
 import { getCurrentUser } from "../../../services/userService.ts";
 
+import type { QuestionDto } from "../types/questionTypes.ts";
+
 function MyQuestionsPage() {
     const currentUser = getCurrentUser();
-    const questions = getMyQuestions(currentUser.id);
+
+    const [questions, setQuestions] = useState<QuestionDto[]>([]);
+    const [answersMap, setAnswersMap] = useState<Record<number, any[]>>({});
+
+    useEffect(() => {
+    async function load() {
+        if (!currentUser) return;
+
+        const qs = await getMyQuestions(currentUser.id);
+        setQuestions(qs);
+
+        const answersEntries = await Promise.all(
+            qs.map(async (q) => {
+                const answers = await getAnswersByQuestionId(q.id);
+                return [q.id, answers] as const;
+            })
+        );
+
+        setAnswersMap(Object.fromEntries(answersEntries));
+    }
+
+    load();
+}, [currentUser]);
 
     return (
         <main className="page-grid">
@@ -19,10 +45,12 @@ function MyQuestionsPage() {
 
                 <div className="questions-feed">
                     {questions.length === 0 ? (
-                        <p className="empty-state">You have not posted questions yet.</p>
+                        <p className="empty-state">
+                            You have not posted questions yet.
+                        </p>
                     ) : (
                         questions.map((q) => {
-                            const answers = getAnswersByQuestionId(q.id);
+                            const answers = answersMap[q.id] || [];
 
                             return (
                                 <QuestionCard
@@ -31,13 +59,16 @@ function MyQuestionsPage() {
                                     title={q.title}
                                     body={q.body}
                                     author={q.author}
-                                    tags={q.tags}
+                                    tags={q.tags ?? []}
                                     createdAt={q.createdAt}
                                     status={q.status}
                                     answerCount={answers.length}
-                                    hasAcceptedAnswer={answers.some((answer) => answer.accepted)}
+                                    hasAcceptedAnswer={answers.some(
+                                        (a) => a.accepted
+                                    )}
                                     voteCount={q.voteCount}
                                     picture={q.picture}
+                                    canEdit
                                 />
                             );
                         })
@@ -49,4 +80,3 @@ function MyQuestionsPage() {
 }
 
 export default MyQuestionsPage;
-

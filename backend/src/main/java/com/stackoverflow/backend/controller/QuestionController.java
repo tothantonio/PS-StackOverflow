@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
+@CrossOrigin(origins = "*")
 public class QuestionController {
 
     @Autowired
@@ -23,6 +24,26 @@ public class QuestionController {
     @GetMapping("/{id}")
     public Question getById(@PathVariable Integer id) {
         return questionService.getById(id);
+    }
+
+    @GetMapping("/author/{authorId}")
+    public List<Question> getByAuthor(@PathVariable Integer authorId) {
+        return questionService.getByAuthor(authorId);
+    }
+
+    @GetMapping("/search")
+    public List<Question> search(@RequestParam(required = false) String keyword) {
+        return questionService.searchByTitle(keyword);
+    }
+
+    @GetMapping("/filter/tag")
+    public List<Question> filterByTag(@RequestParam String tagName) {
+        return questionService.filterByTag(tagName);
+    }
+
+    @GetMapping("/filter/tags")
+    public List<Question> filterByTags(@RequestParam List<String> tagNames) {
+        return questionService.filterByTags(tagNames);
     }
 
     @PostMapping

@@ -1,8 +1,9 @@
 import type {AnswerDto} from "../types/answerTypes.ts";
 import { useState, type ChangeEvent } from "react";
-import { Image } from "lucide-react";
 import Markdown from "./Markdown.tsx";
 import VoteColumn from "./VoteColumn.tsx";
+import PostPicture from "./PostPicture.tsx";
+import { fileToCompressedDataUrl } from "../../../services/imageUtils.ts";
 
 type AnswersCardProps = {
     answer: AnswerDto;
@@ -38,22 +39,21 @@ function getInitials(username: string) {
 function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onDelete, onAccept, onEdit}: AnswersCardProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [body, setBody] = useState(answer.body);
-    const [picture, setPicture] = useState(answer.picture ?? "");
+    const displayPicture = answer.picture ?? "";
+    const [picture, setPicture] = useState(displayPicture);
 
-    function handlePictureFileChange(event: ChangeEvent<HTMLInputElement>) {
+    async function handlePictureFileChange(event: ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
 
         if (!file) {
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            if (typeof reader.result === "string") {
-                setPicture(reader.result);
-            }
-        };
-        reader.readAsDataURL(file);
+        try {
+            setPicture(await fileToCompressedDataUrl(file));
+        } catch {
+            setPicture("");
+        }
     }
 
     return (
@@ -61,7 +61,6 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
             <VoteColumn
                 votes={answer.voteCount}
                 accepted={answer.accepted}
-                picture={answer.picture}
                 disabled={!canVote}
                 onUpvote={() => onVote(answer.id, 1)}
                 onDownvote={() => onVote(answer.id, -1)}
@@ -82,9 +81,7 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                         </label>
                         {picture && (
                             <div className="picture-upload-preview">
-                                <span className="picture-indicator icon-only" title="Picture selected">
-                                    <Image size={14} />
-                                </span>
+                                <PostPicture src={picture} alt="Answer preview" />
                                 <button className="tag-create-button" type="button" onClick={() => setPicture("")}>
                                     Remove picture
                                 </button>
@@ -100,6 +97,9 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                 ) : (
                     <>
                         <Markdown source={answer.body} />
+                        {displayPicture && (
+                            <PostPicture src={displayPicture} alt="Answer attachment" />
+                        )}
                     </>
                 )}
 

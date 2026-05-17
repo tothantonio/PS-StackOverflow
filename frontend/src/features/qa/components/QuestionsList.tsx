@@ -10,7 +10,7 @@ type QuestionListProps = { //ce primeste componneta props
 function QuestionsList({questions} : QuestionListProps){
     return (
         <>
-            {questions.map((q) => {
+            {questions.map(async (q) => {
                 const answers = getAnswersByQuestionId(q.id);
 
                 return (
@@ -23,8 +23,8 @@ function QuestionsList({questions} : QuestionListProps){
                         tags={q.tags}
                         createdAt={q.createdAt}
                         status={q.status}
-                        answerCount={answers.length}
-                        hasAcceptedAnswer={answers.some((answer) => answer.accepted)}
+                        answerCount={(await answers).length}
+                        hasAcceptedAnswer={(await answers).some((answer) => answer.accepted)}
                         voteCount={q.voteCount}
                         picture={q.picture}
                     />

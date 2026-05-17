@@ -14,6 +14,7 @@ type QuestionCardProps = {
     hasAcceptedAnswer?: boolean;
     voteCount?: number;
     picture?: string | null;
+    canEdit?: boolean;
 };
 
 function QuestionCard({
@@ -28,6 +29,7 @@ function QuestionCard({
     hasAcceptedAnswer = false,
     voteCount = 0,
     picture,
+    canEdit = false,
 }: QuestionCardProps) {
     const formattedCreatedAt = new Intl.DateTimeFormat("en", {
         month: "short",
@@ -56,9 +58,7 @@ function QuestionCard({
             </div>
             <div className="question-card-content">
                 <h2>
-                    <Link to={`/questions/${id}`}>
-                        {title}
-                    </Link>
+                    <Link to={`/questions/${id}`}>{title}</Link>
                 </h2>
                 <p>{body}</p>
                 {picture && (
@@ -69,7 +69,7 @@ function QuestionCard({
 
                 <div className="question-card-footer">
                     <div className="tags-list">
-                        {tags.map((tag) => (
+                        {(tags ?? []).map((tag) => (
                             <span key={tag} className="tag-pill">
                                 #{tag}
                             </span>
@@ -86,13 +86,14 @@ function QuestionCard({
                     </div>
                 </div>
 
-                <Link to={`/questions/${id}/edit`} className="card-edit-link">
-                    Edit
-                </Link>
+                {canEdit && (
+                    <Link to={`/questions/${id}/edit`} className="card-edit-link">
+                        Edit
+                    </Link>
+                )}
             </div>
         </article>
     );
 }
 
 export default QuestionCard;
-
