@@ -9,6 +9,7 @@ import AnswersList from "../components/AnswersList.tsx";
 import Markdown from "../components/Markdown.tsx";
 import VoteColumn from "../components/VoteColumn.tsx";
 import PostPicture from "../components/PostPicture.tsx";
+import AuthorWithScore from "../components/AuthorWithScore.tsx";
 
 import {
     acceptAnswer,
@@ -20,7 +21,7 @@ import {
 } from "../../../services/answerService.ts";
 
 import { isLoggedIn } from "../../../services/authService.ts";
-import { getCurrentUser } from "../../../services/userService.ts";
+import { getCurrentUser, updateCurrentUserScore } from "../../../services/userService.ts";
 
 import {
     deleteQuestion,
@@ -156,7 +157,13 @@ function QuestionDetailsPage() {
                         {statusLabel}
                     </span>
 
-                    <span>Author: {activeQuestion.author.username}</span>
+                    <span>
+                        Author:{" "}
+                        <AuthorWithScore
+                            username={activeQuestion.author.username}
+                            score={activeQuestion.author.score}
+                        />
+                    </span>
                 </div>
             </header>
 
@@ -169,14 +176,19 @@ function QuestionDetailsPage() {
                     }
                     onUpvote={async () => {
                         try {
-                            const voteCount = await voteQuestion(
+                            const result = await voteQuestion(
                                 activeQuestion.id,
                                 currentUser!.id,
                                 1
                             );
-                            if (voteCount != null) {
-                                setCurrentQuestion({ ...activeQuestion, voteCount });
-                            }
+                            setCurrentQuestion({
+                                ...activeQuestion,
+                                voteCount: result.voteCount,
+                                author: {
+                                    ...activeQuestion.author,
+                                    score: result.authorScore,
+                                },
+                            });
                             setMessage("");
                         } catch (error) {
                             console.error(error);
@@ -187,14 +199,19 @@ function QuestionDetailsPage() {
                     }}
                     onDownvote={async () => {
                         try {
-                            const voteCount = await voteQuestion(
+                            const result = await voteQuestion(
                                 activeQuestion.id,
                                 currentUser!.id,
                                 -1
                             );
-                            if (voteCount != null) {
-                                setCurrentQuestion({ ...activeQuestion, voteCount });
-                            }
+                            setCurrentQuestion({
+                                ...activeQuestion,
+                                voteCount: result.voteCount,
+                                author: {
+                                    ...activeQuestion.author,
+                                    score: result.authorScore,
+                                },
+                            });
                             setMessage("");
                         } catch (error) {
                             console.error(error);
@@ -273,18 +290,26 @@ function QuestionDetailsPage() {
                 isSolved={isQuestionClosed}
                 onVote={async (answerId, dir) => {
                     try {
-                        const voteCount = await voteAnswer(answerId, currentUser!.id, dir);
-                        if (voteCount != null) {
-                            setAnswers((prev) =>
-                                prev
-                                    .map((answer) =>
-                                        answer.id === answerId
-                                            ? { ...answer, voteCount }
-                                            : answer
-                                    )
-                                    .sort((a, b) => b.voteCount - a.voteCount)
-                            );
+                        const result = await voteAnswer(answerId, currentUser!.id, dir);
+                        if (result.voterScore != null) {
+                            updateCurrentUserScore(result.voterScore);
                         }
+                        setAnswers((prev) =>
+                            prev
+                                .map((answer) =>
+                                    answer.id === answerId
+                                        ? {
+                                              ...answer,
+                                              voteCount: result.voteCount,
+                                              author: {
+                                                  ...answer.author,
+                                                  score: result.authorScore,
+                                              },
+                                          }
+                                        : answer
+                                )
+                                .sort((a, b) => b.voteCount - a.voteCount)
+                        );
                         setMessage("");
                     } catch (error) {
                         console.error(error);

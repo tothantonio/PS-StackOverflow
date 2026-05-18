@@ -27,7 +27,7 @@ public class User {
     private String email;
 
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(nullable = false, unique = false)
     private String password;
 
     private Double score = 0.0;

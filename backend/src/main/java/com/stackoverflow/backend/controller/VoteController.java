@@ -18,8 +18,7 @@ public class VoteController {
             @PathVariable Integer questionId,
             @RequestParam Integer userId,
             @RequestParam int direction) {
-        int voteCount = voteService.voteQuestion(userId, questionId, direction);
-        return new VoteResponse(voteCount);
+        return voteService.voteQuestion(userId, questionId, direction);
     }
 
     @PostMapping("/answers/{answerId}")
@@ -27,7 +26,6 @@ public class VoteController {
             @PathVariable Integer answerId,
             @RequestParam Integer userId,
             @RequestParam int direction) {
-        int voteCount = voteService.voteAnswer(userId, answerId, direction);
-        return new VoteResponse(voteCount);
+        return voteService.voteAnswer(userId, answerId, direction);
     }
 }

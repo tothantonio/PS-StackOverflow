@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Image } from "lucide-react";
 import type { UserDto } from "../types/userTypes.ts";
+import AuthorWithScore from "./AuthorWithScore.tsx";
 
 type QuestionCardProps = {
     id: number;
@@ -81,7 +82,7 @@ function QuestionCard({
                         </span>
                         <div>
                             <span>asked {formattedCreatedAt}</span>
-                            <strong>{author.username}</strong>
+                            <AuthorWithScore username={author.username} score={author.score} />
                         </div>
                     </div>
                 </div>

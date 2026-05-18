@@ -11,7 +11,10 @@ export function normalizeAnswer(raw: ApiAnswer, questionId?: number): AnswerDto 
         questionId: raw.questionId ?? questionId ?? raw.question?.id ?? 0,
         body: raw.body,
         createdAt: raw.createdAt,
-        author: raw.author,
+        author: {
+            ...raw.author,
+            score: raw.author.score ?? 0,
+        },
         voteCount: raw.voteCount ?? 0,
         accepted: raw.accepted ?? false,
         picture: raw.picture ?? raw.imageUrl ?? null,

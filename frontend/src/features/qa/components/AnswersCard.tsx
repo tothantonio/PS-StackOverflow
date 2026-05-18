@@ -1,4 +1,5 @@
 import type {AnswerDto} from "../types/answerTypes.ts";
+import AuthorWithScore from "./AuthorWithScore.tsx";
 import { useState, type ChangeEvent } from "react";
 import Markdown from "./Markdown.tsx";
 import VoteColumn from "./VoteColumn.tsx";
@@ -125,7 +126,7 @@ function AnswersCard({answer, canEdit, canAccept, canVote, isSolved, onVote, onD
                             <span className="avatar-text">{getInitials(answer.author.username)}</span>
                         </span>
                         <div>
-                            <strong>{answer.author.username}</strong>
+                            <AuthorWithScore username={answer.author.username} score={answer.author.score} />
                             <span>answered {formatAnswerDate(answer.createdAt)}</span>
                         </div>
                     </div>

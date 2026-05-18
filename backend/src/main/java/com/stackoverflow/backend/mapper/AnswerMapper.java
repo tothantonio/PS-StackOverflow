@@ -1,7 +1,6 @@
 package com.stackoverflow.backend.mapper;
 
-import com.stackoverflow.backend.dto.AnswerDTO;
-import com.stackoverflow.backend.dto.UserDTO;
+import com.stackoverflow.backend.dto.*;
 import com.stackoverflow.backend.entity.Answer;
 import com.stackoverflow.backend.entity.User;
 

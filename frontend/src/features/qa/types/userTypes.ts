@@ -2,5 +2,6 @@ export type UserDto = { //dto ce vine din backend si sunt mapate cu cele din fro
     id: number;
     username: string;
     email?: string;
+    score?: number;
 };
 

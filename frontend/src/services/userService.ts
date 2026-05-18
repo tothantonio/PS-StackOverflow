@@ -33,6 +33,10 @@ export function getCurrentUser(): UserDto {
     return currentUser;
 }
 
+export function updateCurrentUserScore(score: number): void {
+    currentUser = { ...currentUser, score };
+}
+
 export function findTestUser(username: string, password: string): TestUser | undefined {
     return testUsers.find(
         (user) => user.username === username.trim() && user.password === password

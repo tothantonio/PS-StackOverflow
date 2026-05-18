@@ -147,7 +147,11 @@ export const apiClient = {
                 const message = await response.text();
                 throw new Error(message || "Failed to vote on question");
             }
-            return response.json() as Promise<{ voteCount: number }>;
+            return response.json() as Promise<{
+                voteCount: number;
+                authorScore: number;
+                voterScore?: number | null;
+            }>;
         },
         voteAnswer: async (answerId: number, userId: number, direction: 1 | -1) => {
             const response = await fetch(
@@ -158,7 +162,11 @@ export const apiClient = {
                 const message = await response.text();
                 throw new Error(message || "Failed to vote on answer");
             }
-            return response.json() as Promise<{ voteCount: number }>;
+            return response.json() as Promise<{
+                voteCount: number;
+                authorScore: number;
+                voterScore?: number | null;
+            }>;
         },
     },
 

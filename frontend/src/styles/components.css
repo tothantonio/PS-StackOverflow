@@ -667,6 +667,18 @@
     font-size: 12px;
 }
 
+.author-with-score {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.author-with-score .user-score {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
 .answers-section,
 .your-answer-section {
     margin-top: 42px;

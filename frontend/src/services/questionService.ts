@@ -128,10 +128,9 @@ export async function voteQuestion(
     id: number,
     userId: number,
     direction: 1 | -1
-): Promise<number | undefined> {
+) {
     try {
-        const result = await apiClient.votes.voteQuestion(id, userId, direction);
-        return result.voteCount;
+        return await apiClient.votes.voteQuestion(id, userId, direction);
     } catch (error) {
         console.error("Failed to vote on question:", error);
         throw error;

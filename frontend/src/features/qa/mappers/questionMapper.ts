@@ -35,6 +35,7 @@ export function normalizeQuestion(raw: ApiQuestion): QuestionDto {
         author: {
             id: raw.author.id,
             username: raw.author.username,
+            score: raw.author.score ?? 0,
         },
         tags: raw.tags?.length ? raw.tags : tagsFromJoin,
         voteCount: raw.voteCount ?? 0,
