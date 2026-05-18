@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import type { QuestionDto } from "../types/questionTypes.ts";
 import QuestionForm from "../components/QuestionForm.tsx";
@@ -16,7 +16,6 @@ import { parseTags } from "../../../services/tagUtils.ts";
 
 function QuestionsPage() {
     const [questions, setQuestions] = useState<QuestionDto[]>([]);
-    const [filteredQuestions, setFilteredQuestions] = useState<QuestionDto[]>([]);
     const [answerCounts, setAnswerCounts] = useState<Record<number, number>>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -35,37 +34,51 @@ function QuestionsPage() {
     const loggedIn = isLoggedIn();
     const currentUser = loggedIn ? getCurrentUser() : undefined;
 
-    const loadQuestions = useCallback(async () => {
-        try {
-            setLoading(true);
-            const data = await getQuestions();
-            setQuestions(data || []);
-            setError("");
-        } catch (err) {
-            console.error("Failed to load questions:", err);
-            setError("Failed to load questions");
-            setQuestions([]);
-        } finally {
-            setLoading(false);
+    const filteredQuestions = useMemo(
+        () =>
+            filterQuestions(questions, {
+                searchQuery,
+                tagNames: selectedTags,
+                authorId: filterByUserId,
+                mineOnly: showMyQuestions,
+                currentUserId: currentUser?.id,
+            }),
+        [questions, searchQuery, selectedTags, filterByUserId, showMyQuestions, currentUser?.id]
+    );
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadQuestions() {
+            try {
+                const data = await getQuestions();
+                if (!cancelled) {
+                    setQuestions(data || []);
+                    setError("");
+                }
+            } catch (err) {
+                console.error("Failed to load questions:", err);
+                if (!cancelled) {
+                    setError("Failed to load questions");
+                    setQuestions([]);
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
         }
+
+        void loadQuestions();
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     useEffect(() => {
-        loadQuestions();
-    }, [loadQuestions]);
+        let cancelled = false;
 
-    useEffect(() => {
-        const result = filterQuestions(questions, {
-            searchQuery,
-            tagNames: selectedTags,
-            authorId: filterByUserId,
-            mineOnly: showMyQuestions,
-            currentUserId: currentUser?.id,
-        });
-        setFilteredQuestions(result);
-    }, [questions, searchQuery, selectedTags, filterByUserId, showMyQuestions, currentUser?.id]);
-
-    useEffect(() => {
         async function loadAnswerCounts() {
             const entries = await Promise.all(
                 filteredQuestions.map(async (question) => {
@@ -73,15 +86,34 @@ function QuestionsPage() {
                     return [question.id, answers.length] as const;
                 })
             );
-            setAnswerCounts(Object.fromEntries(entries));
+
+            if (!cancelled) {
+                setAnswerCounts(Object.fromEntries(entries));
+            }
         }
 
-        if (filteredQuestions.length > 0) {
-            loadAnswerCounts();
-        } else {
-            setAnswerCounts({});
+        if (filteredQuestions.length === 0) {
+            return;
         }
+
+        void loadAnswerCounts();
+
+        return () => {
+            cancelled = true;
+        };
     }, [filteredQuestions]);
+
+    async function reloadQuestions() {
+        try {
+            const data = await getQuestions();
+            setQuestions(data || []);
+            setError("");
+        } catch (err) {
+            console.error("Failed to load questions:", err);
+            setError("Failed to load questions");
+            setQuestions([]);
+        }
+    }
 
     async function handleAddQuestion() {
         if (!isLoggedIn()) {
@@ -114,7 +146,7 @@ function QuestionsPage() {
             setNewTags("");
             setNewPicture("");
 
-            await loadQuestions();
+            await reloadQuestions();
         } catch (err) {
             console.error("Failed to create question:", err);
             setFormError("Failed to create question. Please try again.");

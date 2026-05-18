@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import type { AnswerDto } from "../types/answerTypes.ts";
@@ -42,33 +42,49 @@ function QuestionDetailsPage() {
 
     const currentUser = getCurrentUser();
 
-    async function loadQuestion() {
+    const loadQuestion = useCallback(async () => {
         const question = await getQuestionById(questionId);
         setCurrentQuestion(question);
         return question;
-    }
+    }, [questionId]);
 
     useEffect(() => {
+        let cancelled = false;
+
         async function loadData() {
             if (!id || Number.isNaN(questionId)) return;
 
             try {
-                setLoading(true);
-                const question = await loadQuestion();
+                const question = await getQuestionById(questionId);
                 const answersData = await getAnswersByQuestionId(questionId);
+
+                if (cancelled) {
+                    return;
+                }
+
+                setCurrentQuestion(question ?? undefined);
                 setAnswers(answersData);
+
                 if (!question) {
                     setCurrentQuestion(undefined);
                 }
             } catch (error) {
                 console.error("Failed to load question details:", error);
-                setCurrentQuestion(undefined);
+                if (!cancelled) {
+                    setCurrentQuestion(undefined);
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         }
 
-        loadData();
+        void loadData();
+
+        return () => {
+            cancelled = true;
+        };
     }, [id, questionId]);
 
     async function refreshAnswers() {

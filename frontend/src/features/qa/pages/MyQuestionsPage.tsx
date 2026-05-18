@@ -5,13 +5,14 @@ import { getMyQuestions } from "../../../services/questionService.ts";
 import { getAnswersByQuestionId } from "../../../services/answerService.ts";
 import { getCurrentUser } from "../../../services/userService.ts";
 
+import type { AnswerDto } from "../types/answerTypes.ts";
 import type { QuestionDto } from "../types/questionTypes.ts";
 
 function MyQuestionsPage() {
     const currentUser = getCurrentUser();
 
     const [questions, setQuestions] = useState<QuestionDto[]>([]);
-    const [answersMap, setAnswersMap] = useState<Record<number, any[]>>({});
+    const [answersMap, setAnswersMap] = useState<Record<number, AnswerDto[]>>({});
 
     useEffect(() => {
     async function load() {

@@ -38,32 +38,29 @@ export const QuestionsFilter: React.FC<QuestionsFilterProps> = ({
     const [showMyQuestions, setShowMyQuestions] = useState(false);
 
     useEffect(() => {
-        fetchTags();
-        fetchUsers();
+        async function loadFilterOptions() {
+            try {
+                const tags = await apiClient.tags.getAll();
+                setAvailableTags(tags);
+            } catch (error) {
+                console.error("Failed to fetch tags:", error);
+            }
+
+            try {
+                const users = await apiClient.users.getAll();
+                setAvailableUsers(
+                    users.map((user: UserOption) => ({
+                        id: user.id,
+                        username: user.username,
+                    }))
+                );
+            } catch (error) {
+                console.error("Failed to fetch users:", error);
+            }
+        }
+
+        void loadFilterOptions();
     }, []);
-
-    const fetchTags = async () => {
-        try {
-            const tags = await apiClient.tags.getAll();
-            setAvailableTags(tags);
-        } catch (error) {
-            console.error("Failed to fetch tags:", error);
-        }
-    };
-
-    const fetchUsers = async () => {
-        try {
-            const users = await apiClient.users.getAll();
-            setAvailableUsers(
-                users.map((user: UserOption) => ({
-                    id: user.id,
-                    username: user.username,
-                }))
-            );
-        } catch (error) {
-            console.error("Failed to fetch users:", error);
-        }
-    };
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const query = e.target.value;
