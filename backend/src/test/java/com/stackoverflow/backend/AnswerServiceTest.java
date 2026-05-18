@@ -105,7 +105,6 @@ class AnswerServiceTest {
 
         when(answerRepo.findById(3)).thenReturn(Optional.of(answer));
         when(answerRepo.findByQuestionOrderByCreatedAtAsc(q)).thenReturn(List.of(answer));
-        when(answerRepo.findById(3)).thenReturn(Optional.of(answer));
         when(voteService.getAnswerVoteCount(answer)).thenReturn(2);
 
         AnswerDTO result = answerService.accept(3, 10, 1);
@@ -120,7 +119,10 @@ class AnswerServiceTest {
         Answer existing = buildAnswer(1, 1);
         when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
 
+        Answer updated = new Answer();
+        updated.setBody("Updated body");
+
         assertThrows(RuntimeException.class,
-                () -> answerService.update(1, new Answer(), 2));
+                () -> answerService.update(1, updated, 2));
     }
 }
