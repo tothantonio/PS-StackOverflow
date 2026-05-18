@@ -29,6 +29,9 @@ public class QuestionService {
     @Autowired
     private QuestionTagRepository questionTagRepository;
 
+    @Autowired
+    private UserService userService;
+
     public List<Question> getAll() {
         return questionRepository.findAllByOrderByCreatedAtDesc();
     }
@@ -83,6 +86,7 @@ public class QuestionService {
     }
 
     public Question create(Question question, Integer authorId, List<String> tagNames) {
+        userService.assertNotBanned(authorId);
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
         question.setAuthor(author);
@@ -96,9 +100,7 @@ public class QuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
-        if (!question.getAuthor().getId().equals(authorId)) {
-            throw new RuntimeException("Only the author can edit this question");
-        }
+        userService.assertCanModifyContent(authorId, question.getAuthor().getId());
 
         question.setTitle(updatedQuestion.getTitle());
         question.setBody(updatedQuestion.getBody());
@@ -114,9 +116,7 @@ public class QuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
-        if (!question.getAuthor().getId().equals(authorId)) {
-            throw new RuntimeException("Only the author can delete this question");
-        }
+        userService.assertCanModifyContent(authorId, question.getAuthor().getId());
         questionRepository.delete(question);
     }
 
@@ -143,10 +143,4 @@ public class QuestionService {
         }
     }
 
-    public void updateQuestionStatus(Integer id, QuestionStatus status) {
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
-        question.setStatus(status);
-        questionRepository.save(question);
-    }
 }

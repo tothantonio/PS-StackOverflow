@@ -41,3 +41,4 @@ target/
 
 # env
 .env
+notification-service/src/main/resources/application-local.properties

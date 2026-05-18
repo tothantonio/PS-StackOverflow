@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import type { ReactNode } from "react";
 import "./App.css";
+import BannedGuard from "./layout/BannedGuard.tsx";
 import MainLayout from "./layout/MainLayout.tsx";
 import ProtectedRoute from "./layout/ProtectedRoute.tsx";
 import AskQuestionsPage from "./features/qa/pages/AskQuestionsPage.tsx";
@@ -13,6 +14,7 @@ import HomePage from "./pages/HomePage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
+import BannedPage from "./pages/BannedPage.tsx";
 
 function App() {
     function protectedPage(page: ReactNode) {
@@ -21,10 +23,12 @@ function App() {
 
     return (
         <BrowserRouter>
+            <BannedGuard>
             <MainLayout>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/banned" element={<BannedPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/profile" element={protectedPage(<ProfilePage />)} />
                     <Route path="/ask" element={protectedPage(<AskQuestionsPage />)} />
@@ -37,6 +41,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </MainLayout>
+            </BannedGuard>
         </BrowserRouter>
     );
 }

@@ -31,17 +31,19 @@ public class AuthController {
         String username = request.get("username");
         String email = request.get("email");
         String password = request.get("password");
+        String phone = request.get("phone");
 
         if (username == null || email == null || password == null) {
             throw new RuntimeException("Username, email, and password are required");
         }
 
-        User user = authService.register(username, email, password);
+        User user = authService.register(username, email, password, phone);
 
         return Map.of(
                 "id", user.getId(),
                 "username", user.getUsername(),
                 "email", user.getEmail(),
+                "phone", user.getPhone() != null ? user.getPhone() : "",
                 "score", user.getScore(),
                 "message", "Registration successful"
         );

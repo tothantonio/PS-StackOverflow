@@ -35,8 +35,3 @@ export async function createTag(name: string): Promise<TagDto | undefined> {
         return undefined;
     }
 }
-
-export async function getTagNames(): Promise<string[]> {
-    const tags = await getTags();
-    return tags.map((tag) => tag.name);
-}

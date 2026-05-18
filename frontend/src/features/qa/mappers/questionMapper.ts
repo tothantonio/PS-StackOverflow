@@ -46,15 +46,3 @@ export function normalizeQuestion(raw: ApiQuestion): QuestionDto {
 export function normalizeQuestions(rawList: ApiQuestion[]): QuestionDto[] {
     return rawList.map(normalizeQuestion);
 }
-
-export function mapQuestion(dto: QuestionDto) {
-    return {
-        id: dto.id,
-        title: dto.title,
-        body: dto.body,
-        createdAt: dto.createdAt,
-        status: dto.status,
-        author: dto.author.username,
-        tags: dto.tags,
-    };
-}

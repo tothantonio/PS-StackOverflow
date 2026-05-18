@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Filter, X } from "lucide-react";
-import { apiClient } from "../../../services/apiClient.ts";
-import "../../../styles/components.css";
+import { getTags } from "../../../services/tagService.ts";
+import { fetchAllUsers } from "../../../services/userService.ts";
 
 interface Tag {
     id: number;
@@ -40,16 +40,16 @@ export const QuestionsFilter: React.FC<QuestionsFilterProps> = ({
     useEffect(() => {
         async function loadFilterOptions() {
             try {
-                const tags = await apiClient.tags.getAll();
+                const tags = await getTags();
                 setAvailableTags(tags);
             } catch (error) {
                 console.error("Failed to fetch tags:", error);
             }
 
             try {
-                const users = await apiClient.users.getAll();
+                const users = await fetchAllUsers();
                 setAvailableUsers(
-                    users.map((user: UserOption) => ({
+                    users.map((user) => ({
                         id: user.id,
                         username: user.username,
                     }))

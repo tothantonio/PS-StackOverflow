@@ -6,6 +6,7 @@ import com.stackoverflow.backend.repository.AnswerRepository;
 import com.stackoverflow.backend.repository.QuestionRepository;
 import com.stackoverflow.backend.repository.UserRepository;
 import com.stackoverflow.backend.repository.VoteRepository;
+import com.stackoverflow.backend.services.UserService;
 import com.stackoverflow.backend.services.VoteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ class VoteServiceTest {
     @Mock private QuestionRepository questionRepository;
     @Mock private AnswerRepository answerRepository;
     @Mock private UserRepository userRepository;
+    @Mock private UserService userService;
 
     @InjectMocks private VoteService voteService;
 
@@ -36,6 +38,7 @@ class VoteServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().doNothing().when(userService).assertNotBanned(any());
         voter = new User();
         voter.setId(1);
         voter.setScore(0.0);

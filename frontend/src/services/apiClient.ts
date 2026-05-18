@@ -18,23 +18,6 @@ export const apiClient = {
             if (!response.ok) throw new Error("Failed to fetch author questions");
             return response.json();
         },
-        search: async (keyword?: string) => {
-            const params = keyword ? `?keyword=${encodeURIComponent(keyword)}` : "";
-            const response = await fetch(`${API_BASE_URL}/questions/search${params}`);
-            if (!response.ok) throw new Error("Failed to search questions");
-            return response.json();
-        },
-        filterByTag: async (tagName: string) => {
-            const response = await fetch(`${API_BASE_URL}/questions/filter/tag?tagName=${encodeURIComponent(tagName)}`);
-            if (!response.ok) throw new Error("Failed to filter by tag");
-            return response.json();
-        },
-        filterByTags: async (tagNames: string[]) => {
-            const params = tagNames.map(tag => `tagNames=${encodeURIComponent(tag)}`).join("&");
-            const response = await fetch(`${API_BASE_URL}/questions/filter/tags?${params}`);
-            if (!response.ok) throw new Error("Failed to filter by tags");
-            return response.json();
-        },
         create: async (data: { title: string; body: string; imageUrl?: string; tags?: string[] }, authorId: number) => {
             const tagNames = (data.tags || []).join(",");
             const response = await fetch(`${API_BASE_URL}/questions?authorId=${authorId}&tagNames=${encodeURIComponent(tagNames)}`, {
@@ -177,16 +160,6 @@ export const apiClient = {
             if (!response.ok) throw new Error("Failed to fetch tags");
             return response.json();
         },
-        getById: async (id: number) => {
-            const response = await fetch(`${API_BASE_URL}/tags/${id}`);
-            if (!response.ok) throw new Error("Failed to fetch tag");
-            return response.json();
-        },
-        getByName: async (name: string) => {
-            const response = await fetch(`${API_BASE_URL}/tags/name/${encodeURIComponent(name)}`);
-            if (!response.ok) throw new Error("Failed to fetch tag");
-            return response.json();
-        },
         create: async (name: string) => {
             const response = await fetch(`${API_BASE_URL}/tags`, {
                 method: "POST",
@@ -194,57 +167,6 @@ export const apiClient = {
                 body: JSON.stringify({ name }),
             });
             if (!response.ok) throw new Error("Failed to create tag");
-            return response.json();
-        },
-        update: async (id: number, name: string) => {
-            const response = await fetch(`${API_BASE_URL}/tags/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name }),
-            });
-            if (!response.ok) throw new Error("Failed to update tag");
-            return response.json();
-        },
-        delete: async (id: number) => {
-            const response = await fetch(`${API_BASE_URL}/tags/${id}`, {
-                method: "DELETE",
-            });
-            if (!response.ok) throw new Error("Failed to delete tag");
-        },
-    },
-
-    // Users endpoints
-    users: {
-        getAll: async () => {
-            const response = await fetch(`${API_BASE_URL}/users`);
-            if (!response.ok) throw new Error("Failed to fetch users");
-            return response.json();
-        },
-        getById: async (id: number) => {
-            const response = await fetch(`${API_BASE_URL}/users/${id}`);
-            if (!response.ok) throw new Error("Failed to fetch user");
-            return response.json();
-        },
-    },
-
-    // Auth endpoints
-    auth: {
-        login: async (username: string, password: string) => {
-            const response = await fetch(`${API_BASE_URL}/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-            });
-            if (!response.ok) throw new Error("Login failed");
-            return response.json();
-        },
-        register: async (username: string, email: string, password: string) => {
-            const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password }),
-            });
-            if (!response.ok) throw new Error("Registration failed");
             return response.json();
         },
     },

@@ -25,17 +25,3 @@ export function normalizeAnswers(rawList: ApiAnswer[], questionId?: number): Ans
     return rawList.map((raw) => normalizeAnswer(raw, questionId));
 }
 
-export function mapAnswer(dto: AnswerDto) {
-    return {
-        id: dto.id,
-        questionId: dto.questionId,
-        authorName: dto.author.username,
-        body: dto.body,
-        createdAt: dto.createdAt,
-        voteCount: dto.voteCount,
-        accepted: dto.accepted,
-    };
-}
-
-export const mspAnswer = mapAnswer;
-

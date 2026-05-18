@@ -7,7 +7,7 @@ import {
     updateQuestion,
 } from "../../../services/questionService.ts";
 import { isLoggedIn } from "../../../services/authService.ts";
-import { getCurrentUser } from "../../../services/userService.ts";
+import { getCurrentUser, isModerator } from "../../../services/userService.ts";
 import { formatTags, parseTags } from "../../../services/tagUtils.ts";
 import type { QuestionDto } from "../types/questionTypes.ts";
 
@@ -46,7 +46,7 @@ function EditQuestionPage() {
                 }
 
                 const currentUser = getCurrentUser();
-                if (q.author.id !== currentUser.id) {
+                if (q.author.id !== currentUser.id && !isModerator()) {
                     navigate(`/questions/${questionId}`, { replace: true });
                     return;
                 }

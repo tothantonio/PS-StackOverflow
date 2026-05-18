@@ -10,6 +10,4 @@ import java.util.List;
 @Repository
 public interface AnswerRepository extends CrudRepository<Answer, Integer> {
     List<Answer> findByQuestionOrderByCreatedAtAsc(Question question);
-
-    long countByQuestion(Question question);
 }

@@ -3,6 +3,7 @@ package com.stackoverflow.backend.services;
 import com.stackoverflow.backend.entity.User;
 import com.stackoverflow.backend.entity.UserRole;
 import com.stackoverflow.backend.repository.UserRepository;
+import com.stackoverflow.backend.util.PhoneUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,15 +44,17 @@ public class AuthService {
             put("id", user.getId());
             put("username", user.getUsername());
             put("email", user.getEmail());
+            put("phone", user.getPhone());
             put("score", user.getScore());
             put("role", user.getRole());
+            put("isBanned", user.getIsBanned());
         }});
 
         return response;
     }
 
     // Register new user
-    public User register(String username, String email, String password) {
+    public User register(String username, String email, String password, String phone) {
         if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Username already in use");
         }
@@ -64,6 +67,7 @@ public class AuthService {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(password);
+        newUser.setPhone(PhoneUtils.normalize(phone));
         newUser.setScore(0.0);
         newUser.setRole(UserRole.USER);
         newUser.setIsBanned(false);
@@ -71,13 +75,12 @@ public class AuthService {
         return userRepository.save(newUser);
     }
 
-    // Validate token and return user ID
-    public Integer validateToken(String token) {
-        return tokenToUserId.get(token);
-    }
-
     // Logout user by removing token
     public void logout(String token) {
         tokenToUserId.remove(token);
+    }
+
+    public void invalidateUserTokens(Integer userId) {
+        tokenToUserId.entrySet().removeIf(entry -> userId.equals(entry.getValue()));
     }
 }

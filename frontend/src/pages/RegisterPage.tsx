@@ -7,6 +7,7 @@ function RegisterPage() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [phone, setPhone] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState("");
 
@@ -30,7 +31,7 @@ function RegisterPage() {
         }
 
         try {
-            await register({ username, email, password });
+            await register({ username, email, password, phone: phone.trim() || undefined });
             setMessage(`Registration successful! You can now login.`);
             
             // Clear form
@@ -76,6 +77,17 @@ function RegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                 />
+
+                <input
+                    className="question-form-input"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Phone (e.g. +40700111222)"
+                />
+                <p className="form-hint">
+                    Optional. Required to receive SMS if your account is banned.
+                </p>
 
                 <input
                     className="question-form-input"

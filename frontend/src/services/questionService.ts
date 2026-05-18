@@ -27,48 +27,12 @@ export async function getQuestionById(id: number): Promise<QuestionDto | undefin
     }
 }
 
-export async function searchQuestions(search: string): Promise<QuestionDto[]> {
-    try {
-        if (!search.trim()) {
-            return getQuestions();
-        }
-        const results = await apiClient.questions.search(search);
-        return normalizeQuestions(results as ApiQuestion[]);
-    } catch (error) {
-        console.error("Failed to search questions:", error);
-        return [];
-    }
-}
-
 export async function getMyQuestions(userId: number): Promise<QuestionDto[]> {
     try {
         const results = await apiClient.questions.getByAuthor(userId);
         return normalizeQuestions(results as ApiQuestion[]);
     } catch (error) {
         console.error("Failed to fetch my questions:", error);
-        return [];
-    }
-}
-
-export async function getQuestionsByTag(tagName: string): Promise<QuestionDto[]> {
-    try {
-        const results = await apiClient.questions.filterByTag(tagName);
-        return normalizeQuestions(results as ApiQuestion[]);
-    } catch (error) {
-        console.error("Failed to filter by tag:", error);
-        return [];
-    }
-}
-
-export async function getQuestionsByTags(tagNames: string[]): Promise<QuestionDto[]> {
-    try {
-        if (!tagNames.length) {
-            return getQuestions();
-        }
-        const results = await apiClient.questions.filterByTags(tagNames);
-        return normalizeQuestions(results as ApiQuestion[]);
-    } catch (error) {
-        console.error("Failed to filter by tags:", error);
         return [];
     }
 }

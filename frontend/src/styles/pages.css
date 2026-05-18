@@ -369,4 +369,51 @@
     }
 }
 
+.moderator-panel {
+    margin-top: 24px;
+}
+
+.moderator-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.moderator-user-card {
+    border: 1px solid var(--border, #d6d9dc);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.moderator-user-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.banned-card {
+    max-width: 520px;
+}
+
+.form-hint {
+    margin: -6px 0 12px;
+    font-size: 13px;
+    color: #6a737c;
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.profile-field span {
+    font-size: 14px;
+    font-weight: 600;
+}
+
 

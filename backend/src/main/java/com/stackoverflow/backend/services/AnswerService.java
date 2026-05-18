@@ -32,6 +32,9 @@ public class AnswerService {
     @Autowired
     private VoteService voteService;
 
+    @Autowired
+    private UserService userService;
+
     public List<AnswerDTO> getDTOsByQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
@@ -43,6 +46,7 @@ public class AnswerService {
     }
 
     public Answer create(Answer answer, Integer questionId, Integer authorId) {
+        userService.assertNotBanned(authorId);
         validateBody(answer.getBody());
 
         Question question = questionRepository.findById(questionId)
@@ -75,8 +79,7 @@ public class AnswerService {
         Answer answer = answerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Answer not found"));
 
-        if (!answer.getAuthor().getId().equals(authorId))
-            throw new RuntimeException("Only the author can edit this answer");
+        userService.assertCanModifyContent(authorId, answer.getAuthor().getId());
 
         answer.setBody(updatedAnswer.getBody().trim());
         answer.setImageUrl(updatedAnswer.getImageUrl());
@@ -88,8 +91,7 @@ public class AnswerService {
         Answer answer = answerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Answer not found"));
 
-        if (!answer.getAuthor().getId().equals(authorId))
-            throw new RuntimeException("Only the author can delete this answer");
+        userService.assertCanModifyContent(authorId, answer.getAuthor().getId());
 
         answerRepository.delete(answer);
     }

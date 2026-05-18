@@ -5,6 +5,7 @@ import com.stackoverflow.backend.repository.QuestionRepository;
 import com.stackoverflow.backend.repository.TagRepository;
 import com.stackoverflow.backend.repository.UserRepository;
 import com.stackoverflow.backend.services.QuestionService;
+import com.stackoverflow.backend.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,7 @@ class QuestionServiceTest {
     @Mock private QuestionRepository questionRepo;
     @Mock private UserRepository userRepo;
     @Mock private TagRepository tagRepo;
+    @Mock private UserService userService;
 
     @InjectMocks private QuestionService questionService;
 
@@ -74,6 +76,7 @@ class QuestionServiceTest {
     void create_ShouldSaveQuestion_WhenValid() {
         Question q = buildQuestion(1, 1);
 
+        doNothing().when(userService).assertNotBanned(1);
         when(userRepo.findById(1)).thenReturn(Optional.of(buildUser(1)));
         when(tagRepo.findByName("java")).thenReturn(Optional.empty());
         when(tagRepo.save(any(Tag.class))).thenReturn(new Tag());
@@ -100,6 +103,7 @@ class QuestionServiceTest {
         Question update = buildQuestion(1, 1);
         update.setTitle("New Title");
 
+        doNothing().when(userService).assertCanModifyContent(1, 1);
         when(questionRepo.findById(1)).thenReturn(Optional.of(existing));
         when(questionRepo.save(any(Question.class))).thenReturn(existing);
 
@@ -114,14 +118,32 @@ class QuestionServiceTest {
         Question update = buildQuestion(1, 1);
 
         when(questionRepo.findById(1)).thenReturn(Optional.of(existing));
+        doThrow(new RuntimeException("Only the author or a moderator can perform this action"))
+                .when(userService).assertCanModifyContent(2, 1);
 
         assertThrows(RuntimeException.class,
                 () -> questionService.update(1, update, 2, List.of()));
     }
 
     @Test
+    void update_ShouldUpdate_WhenModerator() {
+        Question existing = buildQuestion(1, 1);
+        Question update = buildQuestion(1, 1);
+        update.setTitle("Moderated Title");
+
+        doNothing().when(userService).assertCanModifyContent(99, 1);
+        when(questionRepo.findById(1)).thenReturn(Optional.of(existing));
+        when(questionRepo.save(any(Question.class))).thenReturn(existing);
+
+        Question result = questionService.update(1, update, 99, List.of());
+
+        assertEquals("Moderated Title", result.getTitle());
+    }
+
+    @Test
     void delete_ShouldDelete_WhenOwner() {
         Question q = buildQuestion(1, 1);
+        doNothing().when(userService).assertCanModifyContent(1, 1);
         when(questionRepo.findById(1)).thenReturn(Optional.of(q));
 
         questionService.delete(1, 1);
@@ -133,8 +155,21 @@ class QuestionServiceTest {
     void delete_ShouldThrow_WhenNotOwner() {
         Question q = buildQuestion(1, 1);
         when(questionRepo.findById(1)).thenReturn(Optional.of(q));
+        doThrow(new RuntimeException("Only the author or a moderator can perform this action"))
+                .when(userService).assertCanModifyContent(2, 1);
 
         assertThrows(RuntimeException.class,
                 () -> questionService.delete(1, 2));
+    }
+
+    @Test
+    void delete_ShouldDelete_WhenModerator() {
+        Question q = buildQuestion(1, 1);
+        doNothing().when(userService).assertCanModifyContent(99, 1);
+        when(questionRepo.findById(1)).thenReturn(Optional.of(q));
+
+        questionService.delete(1, 99);
+
+        verify(questionRepo).delete(q);
     }
 }

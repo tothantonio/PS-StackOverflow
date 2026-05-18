@@ -43,7 +43,17 @@ function LoginPage(){
                 />
 
                 <button className="ask-button" type="submit">Login</button>
-                {message && <span className="empty-state">{message}</span>}
+                {message && (
+                    <span
+                        className={
+                            message.toLowerCase().includes("banned")
+                                ? "form-error"
+                                : "empty-state"
+                        }
+                    >
+                        {message}
+                    </span>
+                )}
 
                 <p style={{ marginTop: "20px", textAlign: "center" }}>
                     Don't have an account?{" "}

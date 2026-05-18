@@ -19,28 +19,8 @@ public class TagController {
         return tagService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public Tag getById(@PathVariable Integer id) {
-        return tagService.getById(id);
-    }
-
-    @GetMapping("/name/{name}")
-    public Tag getByName(@PathVariable String name) {
-        return tagService.getByName(name);
-    }
-
     @PostMapping
     public Tag create(@RequestBody Tag tag) {
         return tagService.create(tag);
-    }
-
-    @PutMapping("/{id}")
-    public Tag update(@PathVariable Integer id, @RequestBody Tag tag) {
-        return tagService.update(id, tag);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        tagService.delete(id);
     }
 }

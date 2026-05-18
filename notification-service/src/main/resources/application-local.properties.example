@@ -1,0 +1,24 @@
+# Real email to Gmail / any inbox
+# 1. Copy to: application-local.properties (same folder, gitignored)
+# 2. Google Account → Security → 2-Step Verification → App passwords → generate one for "Mail"
+# 3. Paste app password below (NOT your normal Gmail password)
+# 4. Run from notification-service:
+#    mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+notification.email.mode=smtp
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=your.email@gmail.com
+spring.mail.password=your-16-char-app-password
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+notification.mail.from=your.email@gmail.com
+
+# SMS stays console unless you add Twilio below
+notification.sms.mode=console
+
+# Optional Twilio for real SMS:
+# notification.sms.mode=twilio
+# twilio.account-sid=ACxxxxxxxx
+# twilio.auth-token=...
+# twilio.from-number=+1...

@@ -6,6 +6,7 @@ import com.stackoverflow.backend.repository.AnswerRepository;
 import com.stackoverflow.backend.repository.QuestionRepository;
 import com.stackoverflow.backend.repository.UserRepository;
 import com.stackoverflow.backend.services.AnswerService;
+import com.stackoverflow.backend.services.UserService;
 import com.stackoverflow.backend.services.VoteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ class AnswerServiceTest {
     @Mock private QuestionRepository questionRepo;
     @Mock private UserRepository userRepo;
     @Mock private VoteService voteService;
+    @Mock private UserService userService;
 
     @InjectMocks private AnswerService answerService;
 
@@ -74,6 +76,7 @@ class AnswerServiceTest {
         answer.setBody("New answer");
         Question q = buildQuestion(1);
 
+        doNothing().when(userService).assertNotBanned(1);
         when(questionRepo.findById(1)).thenReturn(Optional.of(q));
         when(userRepo.findById(1)).thenReturn(Optional.of(buildUser(1)));
         when(answerRepo.save(any(Answer.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -118,11 +121,28 @@ class AnswerServiceTest {
     void update_ShouldThrow_WhenNotOwner() {
         Answer existing = buildAnswer(1, 1);
         when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
+        doThrow(new RuntimeException("Only the author or a moderator can perform this action"))
+                .when(userService).assertCanModifyContent(2, 1);
 
         Answer updated = new Answer();
         updated.setBody("Updated body");
 
         assertThrows(RuntimeException.class,
                 () -> answerService.update(1, updated, 2));
+    }
+
+    @Test
+    void update_ShouldUpdate_WhenModerator() {
+        Answer existing = buildAnswer(1, 1);
+        Answer updated = new Answer();
+        updated.setBody("Moderated body");
+
+        doNothing().when(userService).assertCanModifyContent(99, 1);
+        when(answerRepo.findById(1)).thenReturn(Optional.of(existing));
+        when(answerRepo.save(any(Answer.class))).thenReturn(existing);
+
+        Answer result = answerService.update(1, updated, 99);
+
+        assertEquals("Moderated body", result.getBody());
     }
 }

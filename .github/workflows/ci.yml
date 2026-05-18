@@ -5,6 +5,28 @@ on:
   pull_request:
 
 jobs:
+  notification-service-tests:
+    name: Notification Service Tests
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: notification-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+
+      - name: Run Maven tests
+        run: mvn clean test
+
   java-tests:
     name: Java Unit Tests
     runs-on: ubuntu-24.04

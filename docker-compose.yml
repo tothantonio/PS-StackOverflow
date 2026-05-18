@@ -1,0 +1,40 @@
+# Simple stack: MySQL + MailHog + notification-service (real ban emails in MailHog UI).
+# Run:  docker compose up -d
+# Email: http://localhost:8025
+# Optional SMS: add Twilio vars to .env (see .env.example)
+
+services:
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: stackoverflow-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  notification-service:
+    build: ./notification-service
+    container_name: stackoverflow-notifications
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mailhog
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NOTIFICATION_SMS_MODE: ${NOTIFICATION_SMS_MODE:-console}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM_NUMBER: ${TWILIO_FROM_NUMBER:-}
+
+  mysql:
+    image: mysql:8.4
+    container_name: stackoverflow-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: stackoverflow_db
+    volumes:
+      - stackoverflow_mysql_data:/var/lib/mysql
+
+volumes:
+  stackoverflow_mysql_data:

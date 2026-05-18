@@ -5,7 +5,9 @@ import type { QuestionDto } from "../features/qa/types/questionTypes.ts";
 
 import { getQuestions } from "../services/questionService.ts";
 import { isLoggedIn, logout } from "../services/authService.ts";
-import { getCurrentUser } from "../services/userService.ts";
+import ProfileContactForm from "../features/profile/ProfileContactForm.tsx";
+import ModeratorPanel from "../features/moderation/ModeratorPanel.tsx";
+import { getCurrentUser, isModerator } from "../services/userService.ts";
 
 function ProfilePage() {
     const navigate = useNavigate();
@@ -69,9 +71,14 @@ function ProfilePage() {
                     <h1>{user.username}</h1>
 
                     <p>
-                        {loggedIn
-                            ? user.email
-                            : "You are not logged in."}
+                        {loggedIn ? (
+                            <>
+                                {user.email}
+                                {user.phone ? ` · ${user.phone}` : " · No phone on file"}
+                            </>
+                        ) : (
+                            "You are not logged in."
+                        )}
                     </p>
 
                     {loggedIn ? (
@@ -111,6 +118,10 @@ function ProfilePage() {
                     <span>votes</span>
                 </div>
             </section>
+
+            {loggedIn && <ProfileContactForm />}
+
+            {isModerator() && <ModeratorPanel />}
 
             <section className="profile-panel">
                 <h2>My activity</h2>

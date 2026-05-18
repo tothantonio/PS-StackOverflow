@@ -1,7 +1,11 @@
 package com.stackoverflow.backend.services;
 
-import com.stackoverflow.backend.dto.*;
-import com.stackoverflow.backend.entity.*;
+import com.stackoverflow.backend.dto.VoteResponse;
+import com.stackoverflow.backend.entity.Answer;
+import com.stackoverflow.backend.entity.Question;
+import com.stackoverflow.backend.entity.User;
+import com.stackoverflow.backend.entity.Vote;
+import com.stackoverflow.backend.entity.VoteType;
 import com.stackoverflow.backend.repository.AnswerRepository;
 import com.stackoverflow.backend.repository.QuestionRepository;
 import com.stackoverflow.backend.repository.UserRepository;
@@ -32,7 +36,11 @@ public class VoteService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
     public VoteResponse voteQuestion(Integer userId, Integer questionId, int direction) {
+        userService.assertNotBanned(userId);
         if (direction != 1 && direction != -1) {
             throw new RuntimeException("Vote direction must be 1 or -1");
         }
@@ -54,6 +62,7 @@ public class VoteService {
     }
 
     public VoteResponse voteAnswer(Integer userId, Integer answerId, int direction) {
+        userService.assertNotBanned(userId);
         if (direction != 1 && direction != -1) {
             throw new RuntimeException("Vote direction must be 1 or -1");
         }

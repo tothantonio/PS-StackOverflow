@@ -21,7 +21,11 @@ import {
 } from "../../../services/answerService.ts";
 
 import { isLoggedIn } from "../../../services/authService.ts";
-import { getCurrentUser, updateCurrentUserScore } from "../../../services/userService.ts";
+import {
+    getCurrentUser,
+    isModerator,
+    updateCurrentUserScore,
+} from "../../../services/userService.ts";
 
 import {
     deleteQuestion,
@@ -127,6 +131,9 @@ function QuestionDetailsPage() {
         .replace("_", " ");
 
     const isQuestionClosed = activeQuestion.status === "SOLVED";
+    const canManageQuestion =
+        isLoggedIn() &&
+        (activeQuestion.author.id === currentUser?.id || isModerator());
 
     async function handleCreateAnswer(data: {
         questionId: number;
@@ -253,7 +260,7 @@ function QuestionDetailsPage() {
                         ))}
                     </div>
 
-                    {isLoggedIn() && activeQuestion.author.id === currentUser?.id && (
+                    {canManageQuestion && (
                         <div className="detail-actions question-actions">
                             <Link
                                 to={`/questions/${activeQuestion.id}/edit`}
@@ -301,7 +308,8 @@ function QuestionDetailsPage() {
                     isLoggedIn() && a.author.id !== currentUser?.id
                 }
                 canEditAnswer={(a) =>
-                    isLoggedIn() && a.author.id === currentUser?.id
+                    isLoggedIn() &&
+                    (a.author.id === currentUser?.id || isModerator())
                 }
                 isSolved={isQuestionClosed}
                 onVote={async (answerId, dir) => {
