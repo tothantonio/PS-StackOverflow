@@ -12,21 +12,26 @@ function ProfileContactForm() {
     const [phone, setPhone] = useState(user.phone ?? "");
     const [message, setMessage] = useState("");
     const [saving, setSaving] = useState(false);
-
     useEffect(() => {
+        if (!user?.id) return;
+
         async function loadProfile() {
             try {
                 const fresh = await fetchUserById(user.id);
                 setEmail(fresh.email ?? "");
                 setPhone(fresh.phone ?? "");
-                setCurrentUser({ ...user, email: fresh.email, phone: fresh.phone });
+                setCurrentUser({
+                    ...user,
+                    email: fresh.email,
+                    phone: fresh.phone,
+                });
             } catch (error) {
                 console.error(error);
             }
         }
 
         void loadProfile();
-    }, [user.id]);
+    }, [user]);
 
     async function handleSave() {
         setSaving(true);
