@@ -27,6 +27,10 @@ describe('Authentication', () => {
 
     cy.wait('@register')
 
+    cy.contains(/Registration successful/i).should('be.visible')
+
+    cy.wait(2000)
+
     cy.url().should('include', '/login')
 
     cy.visit('/login')

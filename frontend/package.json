@@ -12,8 +12,8 @@
     "test:ci": "vitest run",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "e2e": "start-server-and-test preview http://localhost:5173 cy:run",
-    "e2e:ci": "npm run build && start-server-and-test preview http://localhost:5173 cy:run"
+    "e2e": "start-server-and-test preview http://127.0.0.1:5173 cy:run",
+    "e2e:ci": "npm run build && start-server-and-test preview http://127.0.0.1:5173 cy:run"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",
