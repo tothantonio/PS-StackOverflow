@@ -20,7 +20,7 @@ jobs:
           java-version: 25
           cache: maven
 
-      - run: mvn clean test
+      - run: mvn clean test --no-transfer-progress
 
 
   java-tests:
@@ -38,7 +38,7 @@ jobs:
           java-version: 25
           cache: maven
 
-      - run: mvn clean test
+      - run: mvn clean test --no-transfer-progress
 
 
   frontend-tests:
@@ -93,7 +93,7 @@ jobs:
 
       - name: Build backend
         working-directory: backend
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests --no-transfer-progress
 
       - uses: actions/setup-node@v4
         with:
