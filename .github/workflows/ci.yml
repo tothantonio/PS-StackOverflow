@@ -6,7 +6,6 @@ on:
 
 jobs:
   notification-service-tests:
-    name: Notification Service Tests
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -14,18 +13,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 25
           cache: maven
-
       - run: mvn clean test
 
 
   java-tests:
-    name: Java Unit Tests
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -33,18 +29,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 25
           cache: maven
-
       - run: mvn clean test
 
 
   frontend-tests:
-    name: React Vitest Tests
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -64,7 +57,6 @@ jobs:
 
 
   lint:
-    name: ESLint
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -72,7 +64,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -84,11 +75,36 @@ jobs:
 
 
   cypress-e2e:
-    name: Cypress E2E Tests
     runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
+
+      # BACKEND
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+
+      - name: Build backend
+        working-directory: backend
+        run: mvn clean package -DskipTests
+
+      - name: Start backend
+        working-directory: backend
+        run: nohup java -jar target/*.jar > backend.log 2>&1 &
+
+      - name: Wait backend
+        run: npx wait-on http://localhost:8080
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install frontend
         working-directory: frontend
@@ -105,13 +121,6 @@ jobs:
       - name: Wait frontend
         run: npx wait-on http://localhost:5173
 
-      - name: Start backend
-        working-directory: backend
-        run: nohup mvn spring-boot:run > backend.log 2>&1 &
-
-      - name: Wait backend
-        run: npx wait-on http://localhost:8080
-
-      - name: Run Cypress
+      - name: Run Cypress tests
         working-directory: frontend
         run: npx cypress run

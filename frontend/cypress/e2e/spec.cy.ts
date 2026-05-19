@@ -6,18 +6,6 @@ describe('Authentication', () => {
     const email = `antonio${unique}@test.com`
     const password = `Antonio${unique}!`
 
-    cy.intercept('POST', '**/register', {
-      statusCode: 200,
-      body: {}
-    }).as('register')
-
-    cy.intercept('POST', '**/login', {
-      statusCode: 200,
-      body: {
-        user: { username }
-      }
-    }).as('login')
-
     cy.visit('/register')
 
     cy.get('input[placeholder="Username"]').type(username)
