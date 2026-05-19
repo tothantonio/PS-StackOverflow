@@ -33,15 +33,10 @@ function RegisterPage() {
         try {
             await register({ username, email, password, phone: phone.trim() || undefined });
             setMessage(`Registration successful! You can now login.`);
-            
-            // Clear form
-            setUsername("");
-            setEmail("");
-            setPassword("");
-            setConfirmPassword("");
-
-            // Redirect to login after 2 seconds
-            navigate("/login");
+        
+            setTimeout(() => {
+                navigate("/login");
+            }, 2000);
         } catch (error) {
             setMessage(error instanceof Error ? error.message : "Registration failed.");
         }
