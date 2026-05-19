@@ -3,15 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-  "dev": "vite",
-  "build": "tsc -b && vite build",
-  "lint": "eslint .",
-  "preview": "vite preview --port 5173 --host",
-  "test": "vitest",
-  "test:ci": "vitest run",
-  "cy:open": "cypress open",
-  "cy:run": "cypress run"
+ "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview --port 5173 --host",
+    "test": "vitest",
+    "test:ci": "vitest run",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "e2e": "start-server-and-test preview http://localhost:5173 cy:run",
+    "e2e:ci": "npm run build && start-server-and-test preview http://localhost:5173 cy:run"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",
@@ -35,6 +37,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
     "jsdom": "^29.1.1",
+    "start-server-and-test": "^3.0.5",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.10",

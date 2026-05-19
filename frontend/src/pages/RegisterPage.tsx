@@ -41,9 +41,7 @@ function RegisterPage() {
             setConfirmPassword("");
 
             // Redirect to login after 2 seconds
-            setTimeout(() => {
-                navigate("/login");
-            }, 2000);
+            navigate("/login");
         } catch (error) {
             setMessage(error instanceof Error ? error.message : "Registration failed.");
         }
