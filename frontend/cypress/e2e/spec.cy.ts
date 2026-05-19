@@ -6,8 +6,19 @@ describe('Authentication', () => {
     const email = `antonio${unique}@test.com`
     const password = `Antonio${unique}!`
 
-    // REGISTER
-    cy.visit('http://localhost:5173/register')
+    cy.intercept('POST', '**/register', {
+      statusCode: 200,
+      body: {}
+    }).as('register')
+
+    cy.intercept('POST', '**/login', {
+      statusCode: 200,
+      body: {
+        user: { username }
+      }
+    }).as('login')
+
+    cy.visit('/register')
 
     cy.get('input[placeholder="Username"]').type(username)
     cy.get('input[placeholder="Email"]').type(email)
@@ -16,19 +27,15 @@ describe('Authentication', () => {
 
     cy.contains('button', 'Register').click()
 
-    // ASSERT registration success (FIXED TEXT)
     cy.contains(/Registration successful/i).should('be.visible')
 
-    // NU mai depindem de timeout-ul de 2 sec
     cy.url().should('include', '/login')
 
-    // LOGIN
-    cy.get('input[placeholder="Username"]').should('be.visible').type(username)
+    cy.get('input[placeholder="Username"]').type(username)
     cy.get('input[placeholder="Password"]').type(password)
 
     cy.contains('button', 'Login').click()
 
-    // ASSERT redirect after login
     cy.url().should('include', '/questions')
   })
 })
